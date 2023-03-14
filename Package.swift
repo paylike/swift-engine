@@ -10,7 +10,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "git@github.com:paylike/swift-luhn.git", .upToNextMajor(from: "0.1.0")),
-        .package(url: "git@github.com:paylike/swift-client.git", .upToNextMajor(from: "0.1.0"))
+        .package(url: "git@github.com:paylike/swift-client.git", .upToNextMajor(from: "0.2.0")),
+        .package(url: "git@github.com:httpswift/swifter.git", .upToNextMajor(from: "1.5.0"))
     ],
     targets: [
         .target(
@@ -23,8 +24,7 @@ let package = Package(
             name: "PaylikeEngineTests",
             dependencies: [
                 "PaylikeEngine",
-                .product(name: "PaylikeLuhn", package: "swift-luhn"),
-                .product(name: "PaylikeClient", package: "swift-client")
+                .product(name: "Swifter", package: "swifter")
             ]),
     ],
     swiftLanguageVersions: [.v5]
