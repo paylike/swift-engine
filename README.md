@@ -1,5 +1,5 @@
 # PaylikeEngine
 
-[![build_test](https://github.com/kocsislaci/swift-engine/actions/workflows/build_test.yml/badge.svg?branch=main)](https://github.com/kocsislaci/swift-engine/actions/workflows/build_test.yml)
+[![build_test](/../../actions/workflows/build_test.yml/badge.svg?branch=main)](/../../actions/workflows/build_test.yml)
 
 A description of this package.

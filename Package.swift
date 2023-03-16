@@ -9,9 +9,9 @@ let package = Package(
         .library(name: "PaylikeEngine", targets: ["PaylikeEngine"]),
     ],
     dependencies: [
-        .package(url: "git@github.com:paylike/swift-luhn.git", .upToNextMajor(from: "0.1.0")),
-        .package(url: "git@github.com:paylike/swift-client.git", .upToNextMajor(from: "0.2.0")),
-        .package(url: "git@github.com:httpswift/swifter.git", .upToNextMajor(from: "1.5.0"))
+        .package(url: "https://github.com/paylike/swift-luhn.git", .upToNextMajor(from: "0.2.0")),
+        .package(url: "https://github.com/paylike/swift-client.git", .upToNextMajor(from: "0.2.0")),
+        .package(url: "https://github.com/httpswift/swifter.git", .upToNextMajor(from: "1.5.0"))
     ],
     targets: [
         .target(
