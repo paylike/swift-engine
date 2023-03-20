@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F81F752B297AE70700CE1524 /* PaylikeEngine in Frameworks */ = {isa = PBXBuildFile; productRef = F81F752A297AE70700CE1524 /* PaylikeEngine */; };
 		F82CD66F297AE5A00003A4B6 /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82CD66E297AE5A00003A4B6 /* ExampleApp.swift */; };
 		F82CD671297AE5A00003A4B6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82CD670297AE5A00003A4B6 /* ContentView.swift */; };
 		F82CD673297AE5A20003A4B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F82CD672297AE5A20003A4B6 /* Assets.xcassets */; };
 		F82CD676297AE5A20003A4B6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F82CD675297AE5A20003A4B6 /* Preview Assets.xcassets */; };
+		F8CA616529C874C100EEBBAA /* ApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CA616429C874C100EEBBAA /* ApiKey.swift */; };
+		F8CA616729C8765400EEBBAA /* PaylikeEngine in Frameworks */ = {isa = PBXBuildFile; productRef = F8CA616629C8765400EEBBAA /* PaylikeEngine */; };
+		F8DF81DD299CF22E002A91A2 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DF81DC299CF22E002A91A2 /* ViewModel.swift */; };
+		F8EA4A55299D7A22008F4214 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EA4A54299D7A22008F4214 /* WebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +24,9 @@
 		F82CD672297AE5A20003A4B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F82CD675297AE5A20003A4B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F82CD699297AE67D0003A4B6 /* swift-engine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swift-engine"; path = ..; sourceTree = "<group>"; };
+		F8CA616429C874C100EEBBAA /* ApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKey.swift; sourceTree = "<group>"; };
+		F8DF81DC299CF22E002A91A2 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		F8EA4A54299D7A22008F4214 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,7 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F81F752B297AE70700CE1524 /* PaylikeEngine in Frameworks */,
+				F8CA616729C8765400EEBBAA /* PaylikeEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,7 +70,8 @@
 			isa = PBXGroup;
 			children = (
 				F82CD66E297AE5A00003A4B6 /* ExampleApp.swift */,
-				F82CD670297AE5A00003A4B6 /* ContentView.swift */,
+				F8DF81DF299CF24F002A91A2 /* View */,
+				F8DF81DE299CF23F002A91A2 /* ViewModel */,
 				F82CD672297AE5A20003A4B6 /* Assets.xcassets */,
 				F82CD674297AE5A20003A4B6 /* Preview Content */,
 			);
@@ -87,6 +94,24 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		F8DF81DE299CF23F002A91A2 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				F8DF81DC299CF22E002A91A2 /* ViewModel.swift */,
+				F8CA616429C874C100EEBBAA /* ApiKey.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		F8DF81DF299CF24F002A91A2 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F82CD670297AE5A00003A4B6 /* ContentView.swift */,
+				F8EA4A54299D7A22008F4214 /* WebView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -101,10 +126,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				F8CA616029C8713100EEBBAA /* PBXTargetDependency */,
 			);
 			name = Example;
 			packageProductDependencies = (
-				F81F752A297AE70700CE1524 /* PaylikeEngine */,
+				F8CA616629C8765400EEBBAA /* PaylikeEngine */,
 			);
 			productName = ExampleApp;
 			productReference = F82CD66B297AE5A00003A4B6 /* Example.app */;
@@ -160,12 +186,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8CA616529C874C100EEBBAA /* ApiKey.swift in Sources */,
 				F82CD671297AE5A00003A4B6 /* ContentView.swift in Sources */,
+				F8EA4A55299D7A22008F4214 /* WebView.swift in Sources */,
+				F8DF81DD299CF22E002A91A2 /* ViewModel.swift in Sources */,
 				F82CD66F297AE5A00003A4B6 /* ExampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F8CA616029C8713100EEBBAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = F8CA615F29C8713100EEBBAA /* PaylikeEngine */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F82CD68D297AE5A20003A4B6 /* Debug */ = {
@@ -297,8 +333,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -312,7 +347,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -331,8 +366,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -346,7 +380,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -374,7 +408,11 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F81F752A297AE70700CE1524 /* PaylikeEngine */ = {
+		F8CA615F29C8713100EEBBAA /* PaylikeEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PaylikeEngine;
+		};
+		F8CA616629C8765400EEBBAA /* PaylikeEngine */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PaylikeEngine;
 		};
