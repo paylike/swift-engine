@@ -20,7 +20,7 @@ public class PaylikeEngine: ObservableObject {
     
     public var paylikeClient = PaylikeClient()
     
-    public var loggingFn: ((Encodable) -> Void)?  = { obj in
+    public var loggingFn: ((Encodable) -> Void) = { obj in
         print("Engine logger:", terminator: " ")
         debugPrint(obj)
     }
@@ -34,7 +34,7 @@ public class PaylikeEngine: ObservableObject {
         
         switch engineMode {
             case .LIVE:
-                loggingFn = nil
+                loggingFn = { _ in }
                 paylikeClient.loggingFn = { _ in }
                 paylikeClient.httpClient.loggingFn = { _ in }
             case .TEST:
@@ -43,7 +43,9 @@ public class PaylikeEngine: ObservableObject {
     }
     
     public func resetEngineState() {
-        // @TODO: log?
+        
+        loggingFn(Loggingformat(t: "Resetting engine"))
+        
         self.state = EngineState.WAITING_FOR_INPUT
         self.error = nil
         self.repository = EngineReposity()
@@ -51,13 +53,13 @@ public class PaylikeEngine: ObservableObject {
     
     internal func areEssentialPaymentRepositoryFieldsAdded() throws {
         try isPaymentRepositoryInitialised()
-        guard (
-            repository.paymentRepository!.card != nil
-            || repository.paymentRepository!.applepay != nil
-        ) else {
-            throw EngineError.EssentialPaymentRepositoryDataMissing
-        }
         
+        let hasCard = repository.paymentRepository!.card != nil
+        let hasApplePay = repository.paymentRepository!.applepay != nil
+        guard hasCard != hasApplePay
+        else {
+            throw EngineError.EssentialPaymentRepositoryDataFailure(hasBoth: hasCard && hasApplePay)
+        }
     }
     
     internal func isPaymentRepositoryInitialised() throws {
@@ -68,7 +70,7 @@ public class PaylikeEngine: ObservableObject {
     
     internal func initialisePaymentRepositoryIfNil() {
         if repository.paymentRepository == nil {
-            repository.paymentRepository = CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: self.merchantID)) // @TODO: rename `CreatePaymentRequest` parameter to something PaymentIntegration...
+            repository.paymentRepository = CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: self.merchantID))
         }
     }
     
@@ -89,18 +91,22 @@ public class PaylikeEngine: ObservableObject {
     
     internal func addHintsToRepository(hints: [String]?) throws {
         try isPaymentRepositoryInitialised()
-        repository.paymentRepository!.hints = Array(Set(repository.paymentRepository!.hints).union(Set(hints ?? []))) // @TODO: amit set usage, results in unhandled hint order
+        if let hints = hints {
+            repository.paymentRepository!.hints = hints
+        }
     }
     
     internal func setErrorState(e: Error) {
         
-        self.error = EngineErrorObject(
+        loggingFn(Loggingformat(t: "Error: \(e)"))
+        
+        error = EngineErrorObject(
             message: e.localizedDescription,
             httpClientError: e as? HTTPClientError,
             clientError: e as? ClientError,
             webViewError: e as? WebViewError,
             engineError: e as? EngineError
         )
+        state = .ERROR
     }
-    
 }

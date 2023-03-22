@@ -8,7 +8,7 @@ public enum EngineError : Error {
     
     case InvalidEngineState(caller: String, actual: EngineState, expected: EngineState)
     case PaymentRespositoryIsNotInitialised
-    case EssentialPaymentRepositoryDataMissing
+    case EssentialPaymentRepositoryDataFailure(hasBoth: Bool)
     case InvalidCardNumber(cardNumber: String)
     case WrongAmountOfHints(actual: Int, expected: Int)
     case CardNumberIsInvalid(String)
@@ -28,8 +28,8 @@ extension EngineError : LocalizedError {
                 return "Can't call \(caller) in this state: \(actual). The valid state now is \(expected)."
             case .PaymentRespositoryIsNotInitialised:
                 return "`CreatePaymentRequest` is not initialised."
-            case .EssentialPaymentRepositoryDataMissing:
-                return "PaymentCard or Apple pay data is missing."
+            case .EssentialPaymentRepositoryDataFailure(let hasBoth):
+                return hasBoth ? "Exists both of the data" : "PaymentCard or Apple pay data is missing."
             case .InvalidCardNumber(let cardNumber):
                 return "Invalid card number: \(cardNumber)"
             case .WrongAmountOfHints(let actual, let expected):
