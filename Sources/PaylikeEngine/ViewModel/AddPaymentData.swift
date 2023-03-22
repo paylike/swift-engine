@@ -8,8 +8,27 @@ import AnyCodable
 extension PaylikeEngine {
     
     /**
+     *
+     */
+    public func addEssentialPaymentData(
+        applePayToken: String
+    ) async {
+        do {
+            try checkValidState(valid: EngineState.WAITING_FOR_INPUT, callerFunc: #function)
+            
+            async let applePayToken = paylikeClient.tokenize(applePayData: TokenizeApplePayDataRequest(token: applePayToken))
+            
+            initialisePaymentRepositoryIfNil()
+            repository.paymentRepository!.applepay = try await applePayToken
+        } catch {
+            setErrorState(e: error)
+        }
+    }
+    
+    /**
      * Execute api calls and create the necessary data for the [EngineRepository.paymentRepository]
-     * These are: [PaylikeCardDto], [PaymentIntegrationDto]
+     * /(PaylikeCard)
+     * These are: [PaylikeCard], [PaymentIntegration
      * @see <a
      * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
      * Docs</a>
@@ -36,8 +55,9 @@ extension PaylikeEngine {
         } catch {
             setErrorState(e: error)
         }
-        
     }
+    
+    
     
     /**
      * These fields describe the payment characteristics. To set up check the api docs below.
