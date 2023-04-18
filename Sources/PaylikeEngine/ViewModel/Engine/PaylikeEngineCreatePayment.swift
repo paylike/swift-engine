@@ -10,26 +10,26 @@ extension PaylikeEngine {
      */
     public func startPayment() async {
         do {
+            try checkValidState(valid: .WAITING_FOR_INPUT, callerFunc: #function)
+            try areEssentialPaymentRepositoryFieldsAdded()
             
             loggingFn(Loggingformat(t: "Starting payment"))
             
-            try checkValidState(valid: .WAITING_FOR_INPUT, callerFunc: #function)
-            try areEssentialPaymentRepositoryFieldsAdded()
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
-                repository.htmlRepository = htmlBody
-                state = .WEBVIEW_CHALLENGE_STARTED
+                await saveHtmlRepository(newHtml: htmlBody)
+                await saveState(newState: .WEBVIEW_CHALLENGE_STARTED)
             } else if let transactionId = response.createPaymentResponse.transactionId {
-                repository.transactionId = transactionId
-                state = .SUCCESS
+                await saveTransactionIdRepository(newTransactionId: transactionId)
+                await saveState(newState: .SUCCESS)
             } else if let authorizationId = response.createPaymentResponse.authorizationId {
-                repository.transactionId = authorizationId
-                state = .SUCCESS
+                await saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
+                await saveState(newState: .SUCCESS)
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
     }
     
@@ -38,25 +38,25 @@ extension PaylikeEngine {
      */
     public func continuePayment() async {
         do {
+            try checkValidState(valid: .WEBVIEW_CHALLENGE_STARTED, callerFunc: #function)
             
             loggingFn(Loggingformat(t: "Continuing payment"))
             
-            try checkValidState(valid: .WEBVIEW_CHALLENGE_STARTED, callerFunc: #function)
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
-                repository.htmlRepository = htmlBody
-                state = .WEBVIEW_CHALLENGE_STARTED
+                await saveHtmlRepository(newHtml: htmlBody)
+                await saveState(newState: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
             } else if let transactionId = response.createPaymentResponse.transactionId {
-                repository.transactionId = transactionId
-                state = .SUCCESS
+                await saveTransactionIdRepository(newTransactionId: transactionId)
+                await saveState(newState: .SUCCESS)
             } else if let authorizationId = response.createPaymentResponse.authorizationId {
-                repository.transactionId = authorizationId
-                state = .SUCCESS
+                await saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
+                await saveState(newState: .SUCCESS)
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
     }
     
@@ -65,39 +65,44 @@ extension PaylikeEngine {
      */
     public func finishPayment() async {
         do {
+            try checkValidState(valid: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED, callerFunc: #function)
             
             loggingFn(Loggingformat(t: "Finishing payment"))
-
-            try checkValidState(valid: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED, callerFunc: #function)
+            
             let response = try await payment()
             if response.HTMLBody != nil {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "Response should not be HTML")
             } else if let transactionId = response.createPaymentResponse.transactionId {
-                repository.transactionId = transactionId
+                await saveTransactionIdRepository(newTransactionId: transactionId)
             } else if let authorizationId = response.createPaymentResponse.authorizationId {
-                repository.transactionId = authorizationId
+                await saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No transactionId nor authorizationId")
             }
-            state = .SUCCESS
+            await saveState(newState: .SUCCESS)
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
     }
-    
     /**
      *
      */
     fileprivate func payment() async throws -> PaylikeClientResponse {
         try isNumberOfHintsRight()
-        // @TODO: do we need this check? if the server receives a bad request data object (so without test field) then i throws failure
-        guard self.engineMode == .TEST
-                && repository.paymentRepository!.test != nil
-        else {
+        guard engineMode == .TEST
+                && repository.paymentRepository!.test != nil else {
             throw EngineError.UnimplementedError // @TODO: change error type
         }
-        let response =  try await paylikeClient.createPayment(with: repository.paymentRepository!)
-        try addHintsToRepository(hints: response.createPaymentResponse.hints)
+        guard var paymentRepository = repository.paymentRepository else {
+            throw EngineError.PaymentRespositoryIsNotInitialised
+        }
+        
+        let response =  try await paylikeClient.createPayment(with: paymentRepository)
+        
+        if let newHints = response.createPaymentResponse.hints {
+            paymentRepository.hints = newHints
+            await savePaymentRepository(newRepository: paymentRepository)
+        }
         return response
     }
 }

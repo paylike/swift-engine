@@ -3,7 +3,7 @@ import Foundation
 /**
  * Defines the possible states of the `PaylikeEngine`
  */
-public enum EngineState : String {
+public enum EngineState : String, Encodable {
     case WAITING_FOR_INPUT
     case WEBVIEW_CHALLENGE_STARTED
     case WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED

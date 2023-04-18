@@ -10,25 +10,26 @@ extension PaylikeEngine {
     /**
      *
      */
-    public func addEssentialPaymentData(
+    final public func addEssentialPaymentData(
         applePayToken: String
     ) async {
         do {
             try checkValidState(valid: EngineState.WAITING_FOR_INPUT, callerFunc: #function)
+            var paymentRepository = initialisePaymentRepositoryIfNil()
             
             async let applePayToken = paylikeClient.tokenize(applePayData: TokenizeApplePayDataRequest(token: applePayToken))
+            paymentRepository.applepay = try await applePayToken
             
-            initialisePaymentRepositoryIfNil()
-            repository.paymentRepository!.applepay = try await applePayToken
+            await savePaymentRepository(newRepository: paymentRepository)
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
     }
     
     /**
      * Execute api calls and create the necessary data for the [EngineRepository.paymentRepository]
      * /(PaylikeCard)
-     * These are: [PaylikeCard], [PaymentIntegration
+     * These are: [PaylikeCard], [PaymentIntegration]
      * @see <a
      * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
      * Docs</a>
@@ -40,24 +41,49 @@ extension PaylikeEngine {
         year: Int
     ) async {
         do {
+            try await addEssentialPaymentData(
+                cardNumber: cardNumber,
+                cvc: cvc,
+                expiry: CardExpiry(month: month, year: year)
+            )
+        } catch {
+            prepareError(e: error)
+        }
+    }
+    
+    /**
+     * Execute api calls and create the necessary data for the [EngineRepository.paymentRepository]
+     * /(PaylikeCard)
+     * These are: [PaylikeCard], [PaymentIntegration]
+     * @see <a
+     * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
+     * Docs</a>
+     */
+    public func addEssentialPaymentData(
+        cardNumber: String,
+        cvc: String,
+        expiry: CardExpiry
+    ) async {
+        do {
             try checkValidState(valid: EngineState.WAITING_FOR_INPUT, callerFunc: #function)
+            var paymentRepository = initialisePaymentRepositoryIfNil()
+
             if  !PaylikeLuhn.isValid(cardNumber: cardNumber)
-                    && engineMode == EngineMode.LIVE {
+                    && engineMode == .LIVE {
                 throw EngineError.InvalidCardNumber(cardNumber: cardNumber)
             }
             async let numberToken = paylikeClient.tokenize(cardData: TokenizeCardDataRequest(type: .PCN, value: cardNumber))
             async let cvcToken = paylikeClient.tokenize(cardData: TokenizeCardDataRequest(type: .PCSC, value: cvc))
-            
-            let card = try await PaymentCard(number: numberToken, code: cvcToken, expiry: CardExpiry(month: month, year: year))
-            
-            initialisePaymentRepositoryIfNil()
-            repository.paymentRepository!.card = card
+            let card = try await PaymentCard(number: numberToken, code: cvcToken, expiry: expiry)
+            paymentRepository.card = card
+                    
+            await savePaymentRepository(newRepository: paymentRepository)
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
     }
     
-    
+//    fileprivate func save(repo: )
     
     /**
      * These fields describe the payment characteristics. To set up check the api docs below.
@@ -76,13 +102,16 @@ extension PaylikeEngine {
     ) {
         do {
             try checkValidState(valid: EngineState.WAITING_FOR_INPUT, callerFunc: #function)
-            initialisePaymentRepositoryIfNil()
-            repository.paymentRepository!.amount = paymentAmount
-            repository.paymentRepository!.plan = paymentPlanDataList
-            repository.paymentRepository!.unplanned = paymentUnplannedData
-            repository.paymentRepository!.test = paymentTestData
+            var paymentRepository = initialisePaymentRepositoryIfNil()
+            
+            paymentRepository.amount = paymentAmount
+            paymentRepository.plan = paymentPlanDataList
+            paymentRepository.unplanned = paymentUnplannedData
+            paymentRepository.test = paymentTestData
+            
+            savePaymentRepository(newRepository: paymentRepository)
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
     }
     
@@ -100,11 +129,18 @@ extension PaylikeEngine {
     ) {
         do {
             try checkValidState(valid: EngineState.WAITING_FOR_INPUT, callerFunc: #function)
-            initialisePaymentRepositoryIfNil()
-            repository.paymentRepository!.text = textData
-            repository.paymentRepository!.custom = customData
+            var paymentRepository = initialisePaymentRepositoryIfNil()
+            
+            paymentRepository.text = textData
+            paymentRepository.custom = customData
+            
+            savePaymentRepository(newRepository: paymentRepository)
         } catch {
-            setErrorState(e: error)
+            prepareError(e: error)
         }
+    }
+    
+    fileprivate func initialisePaymentRepositoryIfNil() -> CreatePaymentRequest {
+        return repository.paymentRepository ?? CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: self.merchantID))
     }
 }

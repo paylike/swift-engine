@@ -3,5 +3,5 @@
  */
 internal struct Loggingformat : Encodable {
     var t: String
-    // @TODO: more fields
+//    var logged: Loggable?    
 }
