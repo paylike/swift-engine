@@ -17,7 +17,7 @@ extension PaylikeEngine {
             try checkValidState(valid: EngineState.WAITING_FOR_INPUT, callerFunc: #function)
             var paymentRepository = initialisePaymentRepositoryIfNil()
             
-            async let applePayToken = paylikeClient.tokenize(applePayData: TokenizeApplePayDataRequest(token: applePayToken))
+            async let applePayToken = client.tokenize(applePayData: TokenizeApplePayDataRequest(token: applePayToken))
             paymentRepository.applepay = try await applePayToken
             
             await savePaymentRepository(newRepository: paymentRepository)
@@ -72,8 +72,8 @@ extension PaylikeEngine {
                     && engineMode == .LIVE {
                 throw EngineError.InvalidCardNumber(cardNumber: cardNumber)
             }
-            async let numberToken = paylikeClient.tokenize(cardData: TokenizeCardDataRequest(type: .PCN, value: cardNumber))
-            async let cvcToken = paylikeClient.tokenize(cardData: TokenizeCardDataRequest(type: .PCSC, value: cvc))
+            async let numberToken = client.tokenize(cardData: TokenizeCardDataRequest(type: .PCN, value: cardNumber))
+            async let cvcToken = client.tokenize(cardData: TokenizeCardDataRequest(type: .PCSC, value: cvc))
             let card = try await PaymentCard(number: numberToken, code: cvcToken, expiry: expiry)
             paymentRepository.card = card
                     

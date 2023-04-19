@@ -19,6 +19,9 @@ extension PaylikeEngine {
             if let htmlBody = response.HTMLBody {
                 await saveHtmlRepository(newHtml: htmlBody)
                 await saveState(newState: .WEBVIEW_CHALLENGE_STARTED)
+                await MainActor.run {
+                    webViewModel?.createWebView()
+                }
             } else if let transactionId = response.createPaymentResponse.transactionId {
                 await saveTransactionIdRepository(newTransactionId: transactionId)
                 await saveState(newState: .SUCCESS)
@@ -97,7 +100,7 @@ extension PaylikeEngine {
             throw EngineError.PaymentRespositoryIsNotInitialised
         }
         
-        let response =  try await paylikeClient.createPayment(with: paymentRepository)
+        let response =  try await client.createPayment(with: paymentRepository)
         
         if let newHints = response.createPaymentResponse.hints {
             paymentRepository.hints = newHints

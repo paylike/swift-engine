@@ -9,7 +9,9 @@ public class PaylikeEngine: ObservableObject {
     
     public var merchantID: String
     
-    public var paylikeClient = PaylikeClient()
+    public var client = PaylikeClient()
+    
+    internal(set) public var webViewModel: PaylikeWebViewModel?
     
     public var engineMode = EngineMode.TEST
     
@@ -22,7 +24,7 @@ public class PaylikeEngine: ObservableObject {
     
     @Published internal(set) public var state = EngineState.WAITING_FOR_INPUT
     @Published internal(set) public var error: EngineErrorObject?
-    @Published /*internal(set)*/ public var repository = EngineReposity() // @TODO: make it internal (set)
+    @Published internal(set) public var repository = EngineReposity()
 
     public init(
         merchantID: String,
@@ -32,6 +34,7 @@ public class PaylikeEngine: ObservableObject {
         self.merchantID = merchantID
         self.engineMode = engineMode
         setLoggignMode(newMode: loggingMode)
+        webViewModel = PaylikeWebViewModel(engine: self)
     }
     
     public func setLoggignMode(newMode: LoggingMode) {
@@ -45,18 +48,18 @@ public class PaylikeEngine: ObservableObject {
                     print("Engine logger:", terminator: " ")
                     debugPrint(obj)
                 }
-                paylikeClient.loggingFn = { obj in
+                client.loggingFn = { obj in
                     print("Client logger:", terminator: " ")
                     debugPrint(obj)
                 }
-                paylikeClient.httpClient.loggingFn = { obj in
+                client.httpClient.loggingFn = { obj in
                     print("HTTP Client logger:", terminator: " ")
                     debugPrint(obj)
                 }
             case .RELEASE:
                 loggingFn = { _ in }
-                paylikeClient.loggingFn = { _ in }
-                paylikeClient.httpClient.loggingFn = { _ in }
+                client.loggingFn = { _ in }
+                client.httpClient.loggingFn = { _ in }
         }
     }
 }

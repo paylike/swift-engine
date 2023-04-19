@@ -12,7 +12,15 @@ extension PaylikeEngine {
         state = EngineState.WAITING_FOR_INPUT
         error = nil
         repository = EngineReposity()
+        webViewModel?.dropWebView()
+        
         objectWillChange.send()
+    }
+    
+    public func resetEngine() async {
+        await MainActor.run {
+            resetEngine()
+        }
     }
     
     internal func saveState(newState: EngineState) {

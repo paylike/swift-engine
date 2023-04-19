@@ -8,25 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		F82CD66F297AE5A00003A4B6 /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82CD66E297AE5A00003A4B6 /* ExampleApp.swift */; };
-		F82CD671297AE5A00003A4B6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82CD670297AE5A00003A4B6 /* ContentView.swift */; };
+		F82CD671297AE5A00003A4B6 /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82CD670297AE5A00003A4B6 /* ExampleView.swift */; };
 		F82CD673297AE5A20003A4B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F82CD672297AE5A20003A4B6 /* Assets.xcassets */; };
 		F82CD676297AE5A20003A4B6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F82CD675297AE5A20003A4B6 /* Preview Assets.xcassets */; };
+		F8BCF53929DB65D600B0E211 /* ViewModelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BCF53829DB65D600B0E211 /* ViewModelState.swift */; };
 		F8CA616529C874C100EEBBAA /* ApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CA616429C874C100EEBBAA /* ApiKey.swift */; };
 		F8CA616729C8765400EEBBAA /* PaylikeEngine in Frameworks */ = {isa = PBXBuildFile; productRef = F8CA616629C8765400EEBBAA /* PaylikeEngine */; };
 		F8DF81DD299CF22E002A91A2 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DF81DC299CF22E002A91A2 /* ViewModel.swift */; };
-		F8EA4A55299D7A22008F4214 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EA4A54299D7A22008F4214 /* WebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F82CD66B297AE5A00003A4B6 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F82CD66E297AE5A00003A4B6 /* ExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
-		F82CD670297AE5A00003A4B6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F82CD670297AE5A00003A4B6 /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
 		F82CD672297AE5A20003A4B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F82CD675297AE5A20003A4B6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F82CD699297AE67D0003A4B6 /* swift-engine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swift-engine"; path = ..; sourceTree = "<group>"; };
+		F8BCF53829DB65D600B0E211 /* ViewModelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelState.swift; sourceTree = "<group>"; };
 		F8CA616429C874C100EEBBAA /* ApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKey.swift; sourceTree = "<group>"; };
+		F8D280B229D5A36F00FD6D81 /* Example-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Example-Info.plist"; sourceTree = "<group>"; };
 		F8DF81DC299CF22E002A91A2 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		F8EA4A54299D7A22008F4214 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +52,7 @@
 		F82CD662297AE5A00003A4B6 = {
 			isa = PBXGroup;
 			children = (
+				F8D280B229D5A36F00FD6D81 /* Example-Info.plist */,
 				F82CD698297AE67D0003A4B6 /* Packages */,
 				F82CD66D297AE5A00003A4B6 /* ExampleApp */,
 				F82CD66C297AE5A00003A4B6 /* Products */,
@@ -99,6 +101,7 @@
 			children = (
 				F8DF81DC299CF22E002A91A2 /* ViewModel.swift */,
 				F8CA616429C874C100EEBBAA /* ApiKey.swift */,
+				F8BCF53829DB65D600B0E211 /* ViewModelState.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -106,8 +109,7 @@
 		F8DF81DF299CF24F002A91A2 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				F82CD670297AE5A00003A4B6 /* ContentView.swift */,
-				F8EA4A54299D7A22008F4214 /* WebView.swift */,
+				F82CD670297AE5A00003A4B6 /* ExampleView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -187,8 +189,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8CA616529C874C100EEBBAA /* ApiKey.swift in Sources */,
-				F82CD671297AE5A00003A4B6 /* ContentView.swift in Sources */,
-				F8EA4A55299D7A22008F4214 /* WebView.swift in Sources */,
+				F82CD671297AE5A00003A4B6 /* ExampleView.swift in Sources */,
+				F8BCF53929DB65D600B0E211 /* ViewModelState.swift in Sources */,
 				F8DF81DD299CF22E002A91A2 /* ViewModel.swift in Sources */,
 				F82CD66F297AE5A00003A4B6 /* ExampleApp.swift in Sources */,
 			);
@@ -329,8 +331,8 @@
 				DEVELOPMENT_TEAM = 2G8TY2M8CZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Example-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Example;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -362,8 +364,8 @@
 				DEVELOPMENT_TEAM = 2G8TY2M8CZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Example-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Example;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
