@@ -31,6 +31,8 @@ public class PaylikeWebViewModel: ObservableObject {
         webView = nil
         paylikeWebView = nil
         hintsListener = nil
+        cancellables = []
+        shouldRenderWebView = false
     }
     
     private func initWebView(hintsListener: HintsListener) -> WKWebView {
