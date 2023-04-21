@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.swift_version    = '5.0'
   s.ios.deployment_target = '13.0'
   s.version          = '0.1.0'
-  s.summary          = 'High level API package to construct specific requests towards the Paylike ecosystem'
+  s.summary          = 'This library includes the core elements required to implement a payment flow towards the Paylike API.
   s.description      = <<-DESC
 This packages is a clone of the JS version and responsible for providing a hand high level interface to create payments in the Paylike ecosystem
                         DESC
