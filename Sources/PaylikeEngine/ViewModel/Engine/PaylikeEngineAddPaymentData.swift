@@ -83,8 +83,6 @@ extension PaylikeEngine {
         }
     }
     
-//    fileprivate func save(repo: )
-    
     /**
      * These fields describe the payment characteristics. To set up check the api docs below.
      * @param paymentAmount define a single payment amount
@@ -140,7 +138,7 @@ extension PaylikeEngine {
         }
     }
     
-    fileprivate func initialisePaymentRepositoryIfNil() -> CreatePaymentRequest {
+    private func initialisePaymentRepositoryIfNil() -> CreatePaymentRequest {
         return repository.paymentRepository ?? CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: self.merchantID))
     }
 }
