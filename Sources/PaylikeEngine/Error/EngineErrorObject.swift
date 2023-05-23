@@ -1,3 +1,4 @@
+import Foundation
 import PaylikeRequest
 import PaylikeClient
 
@@ -5,13 +6,12 @@ import PaylikeClient
  *
  */
 public struct EngineErrorObject {
-    let message: String
-    let httpClientError: HTTPClientError?
-    let clientError: ClientError?
-    let webViewError: WebViewError?
-    let engineError: EngineError?
+    public let message: String
+    public let httpClientError: HTTPClientError?
+    public let clientError: ClientError?
+    public let webViewError: WebViewError?
+    public let engineError: EngineError?
 }
-
 
 //extension HTTPClientError : Encodable {
 //    public func encode(to encoder: Encoder) throws {

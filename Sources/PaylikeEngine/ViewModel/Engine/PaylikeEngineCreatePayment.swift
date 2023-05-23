@@ -94,7 +94,7 @@ extension PaylikeEngine {
         try isNumberOfHintsRight()
         guard engineMode == .TEST
                 && repository.paymentRepository!.test != nil else {
-            throw EngineError.UnimplementedError // @TODO: change error type
+            throw EngineError.PaymentTestDataIsNil
         }
         guard var paymentRepository = repository.paymentRepository else {
             throw EngineError.PaymentRespositoryIsNotInitialised

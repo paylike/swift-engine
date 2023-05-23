@@ -1,11 +1,10 @@
 import Foundation
 
 /**
- Describes errors regarding the library
+ * Describes errors regarding the Engine and it's close components
  */
-public enum EngineError : Error {
-    case UnimplementedError
-    
+public enum EngineError: Error, LocalizedError {
+    case NotImplemented
     case InvalidEngineState(caller: String, actual: EngineState, expected: EngineState)
     case PaymentRespositoryIsNotInitialised
     case EssentialPaymentRepositoryDataFailure(hasBoth: Bool)
@@ -13,17 +12,18 @@ public enum EngineError : Error {
     case WrongAmountOfHints(actual: Int, expected: Int)
     case CardNumberIsInvalid(String)
     case PaymentFlowError(caller: String, cause: String)
-}
-
-extension EngineError : LocalizedError {
+    case PaymentTestDataIsNil
+    
+    /**
+     * Localized text of the error messages
+     */
+    // @TODO: Change text literals to `NSLocalizedString`s
+    // @TODO: Generate localized string file in Xcode
     public var errorDescription: String? {
         switch self {
                 
-            case .UnimplementedError:
-                return "Unimplemented"
-                
-                
-                
+            case .NotImplemented:
+                return "NotImplemented"
             case .InvalidEngineState(let caller, let actual, let expected):
                 return "Can't call \(caller) in this state: \(actual). The valid state now is \(expected)."
             case .PaymentRespositoryIsNotInitialised:
@@ -35,9 +35,11 @@ extension EngineError : LocalizedError {
             case .WrongAmountOfHints(let actual, let expected):
                 return "Expected number: \(expected). Actual number: \(actual)."
             case .CardNumberIsInvalid(let cardNubmer):
-                return "\(cardNubmer) is invalid based on Luhn algorithm"
+                return "\(cardNubmer) is invalid based on Luhn algorithm."
             case .PaymentFlowError(let caller, let cause):
-                return "Payment flow error in \(caller). Error caused by: \(cause)"
+                return "Payment flow error in \(caller). Error caused by: \(cause)."
+            case .PaymentTestDataIsNil:
+                return "Engine is in test mode and repository does not have PaymentTest data."
         }
     }
 }
