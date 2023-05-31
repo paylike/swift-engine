@@ -9,7 +9,7 @@ public class PaylikeEngine: ObservableObject {
     
     public var merchantID: String
     
-    public var client = PaylikeClient()
+    public var client: Client = PaylikeClient()
     
     public var webViewModel: (any WebViewModel)?
     
