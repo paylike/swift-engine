@@ -3,36 +3,57 @@ import SwiftUI
 import WebKit
 
 /**
- *
+ * Public protocol to provide ViewModel for the WebVIew in case of ThreeDS payment flow
  */
-public class PaylikeWebViewModel: ObservableObject {
+public protocol WebViewModel: ObservableObject {
+    var paylikeWebView: PaylikeWebView? { get }
+    var shouldRenderWebView: Bool { get }
     
-    internal weak var engine: PaylikeEngine?
+    func createWebView()
+    func dropWebView()
+}
+
+/**
+ * Public final implementation of ThreeDS supporting WebView, default in PaylikeEngine
+ */
+public final class PaylikeWebViewModel: WebViewModel {
     
-    private var cancellables: Set<AnyCancellable> = []
-    @Published private (set) public var shouldRenderWebView = false
-    
-    internal var webView: WKWebView?
-    private (set) public var paylikeWebView: PaylikeWebView?
+    weak var engine: PaylikeEngine?
+    var webView: WKWebView?
+    private var _paylikeWebView: PaylikeWebView?
+    public var paylikeWebView: PaylikeWebView? {
+        return _paylikeWebView
+    }
+    @Published private var _shouldRenderWebView = false
+    public var shouldRenderWebView: Bool {
+        return _shouldRenderWebView
+    }
     private var hintsListener: HintsListener?
-    
-    init(engine: PaylikeEngine) {
+    private var cancellables: Set<AnyCancellable> = []
+
+    public init(engine: PaylikeEngine) {
         self.engine = engine
     }
     
-    func createWebView() {
+    /**
+     * Initialization of webView with hintsListener
+     */
+    public func createWebView() {
         hintsListener = HintsListener(vm: self)
         webView = initWebView(hintsListener: hintsListener!)
         setUpEngineListening()
-        paylikeWebView = PaylikeWebView(webView: webView!)
+        _paylikeWebView = PaylikeWebView(webView: webView!)
     }
     
-    func dropWebView() {
+    /**
+     * Reset webView
+     */
+    public func dropWebView() {
         webView = nil
-        paylikeWebView = nil
+        _paylikeWebView = nil
         hintsListener = nil
         cancellables = []
-        shouldRenderWebView = false
+        _shouldRenderWebView = false
     }
     
     private func initWebView(hintsListener: HintsListener) -> WKWebView {
@@ -53,19 +74,15 @@ public class PaylikeWebViewModel: ObservableObject {
             .sink(receiveValue: { state in
                 switch state {
                     case .WAITING_FOR_INPUT:
-                        self.shouldRenderWebView = false
+                        self._shouldRenderWebView = false
                     case .WEBVIEW_CHALLENGE_STARTED:
-                        self.shouldRenderWebView = true
+                        self._shouldRenderWebView = true
                     case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
-                        self.webView!.evaluateJavaScript(setIFrameContent(to: self.engine?.repository.htmlRepository ?? "")) { stuff, error in
-                            if let error = error {
-                                debugPrint("In webView state sink (WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED) evaluated JS error occured: \(error)")
-                            }
-                        }
+                        self.webView!.evaluateJavaScript(setIFrameContent(to: (self.engine?.repository.htmlRepository!)!))
                     case .SUCCESS:
-                        self.shouldRenderWebView = false
+                        self._shouldRenderWebView = false
                     case .ERROR:
-                        self.shouldRenderWebView = false
+                        self._shouldRenderWebView = false
                 }
             })
             .store(in: &cancellables)

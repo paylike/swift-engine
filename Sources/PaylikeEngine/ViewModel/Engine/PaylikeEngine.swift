@@ -11,7 +11,7 @@ public class PaylikeEngine: ObservableObject {
     
     public var client = PaylikeClient()
     
-    internal(set) public var webViewModel: PaylikeWebViewModel?
+    public var webViewModel: (any WebViewModel)?
     
     public var engineMode = EngineMode.TEST
     
