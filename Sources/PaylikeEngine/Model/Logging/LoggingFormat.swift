@@ -3,5 +3,4 @@
  */
 struct Loggingformat : Encodable {
     var t: String
-//    var logged: Loggable?    
 }

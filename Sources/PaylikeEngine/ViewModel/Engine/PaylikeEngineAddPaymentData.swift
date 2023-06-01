@@ -2,13 +2,13 @@ import PaylikeClient
 import PaylikeLuhn
 import AnyCodable
 
-/**
- *
- */
 extension PaylikeEngine {
     
     /**
+     * Adding the generated applePay token to Paylike backend to tokenize it.
      *
+     * Stores the tokenized applePay token to the engine PaymentRepository.
+     * [More information](https://github.com/paylike/api-reference/blob/main/payments/index.md)
      */
     final public func addEssentialPaymentData(
         applePayToken: String
@@ -27,12 +27,10 @@ extension PaylikeEngine {
     }
     
     /**
-     * Execute api calls and create the necessary data for the [EngineRepository.paymentRepository]
-     * /(PaylikeCard)
-     * These are: [PaylikeCard], [PaymentIntegration]
-     * @see <a
-     * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
-     * Docs</a>
+     * Adding the card data to Paylike backend to tokenize it.
+     *
+     * Stores the tokenized data to the engine PaymentRepository.
+     * [More information](https://github.com/paylike/api-reference/blob/main/payments/index.md)
      */
     public func addEssentialPaymentData(
         cardNumber: String,
@@ -52,12 +50,10 @@ extension PaylikeEngine {
     }
     
     /**
-     * Execute api calls and create the necessary data for the [EngineRepository.paymentRepository]
-     * /(PaylikeCard)
-     * These are: [PaylikeCard], [PaymentIntegration]
-     * @see <a
-     * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
-     * Docs</a>
+     * Adding the card data to Paylike backend to tokenize it.
+     *
+     * Stores the tokenized data to the engine PaymentRepository.
+     * [More information](https://github.com/paylike/api-reference/blob/main/payments/index.md)
      */
     public func addEssentialPaymentData(
         cardNumber: String,
@@ -88,9 +84,7 @@ extension PaylikeEngine {
      * @param paymentAmount define a single payment amount
      * @param paymentPlanDataList define reoccurring payments
      * @param paymentUnplannedData define the types of unplanned payments the card will be used for
-     * @see <a
-     * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
-     * Docs</a>
+     * [More information](https://github.com/paylike/api-reference/blob/main/payments/index.md)
      */
     public func addDescriptionPaymentData(
         paymentAmount: PaymentAmount? = nil,
@@ -117,9 +111,7 @@ extension PaylikeEngine {
      * These field are optional to define.
      * @param textData is a simple text shown on the paylike dashboard
      * @param customData is a custom Json object defined by the user
-     * @see <a
-     * href="https://github.com/paylike/api-reference/blob/main/payments/index.md#challengeresponse">Api
-     * Docs</a>
+     * [More information](https://github.com/paylike/api-reference/blob/main/payments/index.md)
      */
     public func addAdditionalPaymentData(
         textData: String? = nil,

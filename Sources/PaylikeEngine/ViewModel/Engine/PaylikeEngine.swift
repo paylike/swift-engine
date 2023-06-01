@@ -26,6 +26,9 @@ public class PaylikeEngine: ObservableObject {
     @Published internal(set) public var error: EngineErrorObject?
     @Published internal(set) public var repository = EngineReposity()
 
+    /**
+     * Initialize engine with the default parameters
+     */
     public init(
         merchantID: String,
         engineMode: EngineMode,
@@ -37,6 +40,13 @@ public class PaylikeEngine: ObservableObject {
         webViewModel = PaylikeWebViewModel(engine: self)
     }
     
+    
+    /**
+     * Sets logging mode the the given mode. Sets the logger function according to the new mode.
+     *
+     * Debug mode logs messages to the console
+     * Release mode does not log to the console
+     */
     public func setLoggignMode(newMode: LoggingMode) {
         loggingMode = newMode
         setLoggerFns(basedOn: newMode)

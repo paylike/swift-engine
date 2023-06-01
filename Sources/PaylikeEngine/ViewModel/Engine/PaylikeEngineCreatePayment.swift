@@ -1,12 +1,12 @@
 import PaylikeClient
 
-/**
- *
- */
 extension PaylikeEngine {
     
     /**
+     * Starts payment toward the Paylike backend
      *
+     * Have to call at the beginning of any payment flow, when every necessary data is set in the repository.
+     * Changes state, webView and repository.
      */
     public func startPayment() async {
         do {
@@ -37,7 +37,10 @@ extension PaylikeEngine {
     }
     
     /**
+     * Continues the payment flow
      *
+     * Webview calls it.
+     * Changes state, webView and repository.
      */
     public func continuePayment() async {
         do {
@@ -64,7 +67,10 @@ extension PaylikeEngine {
     }
     
     /**
+     * Finishes the payment flow
      *
+     * Webview calls it when ThreeDS is successfull.
+     * Changes state, webView and repository.
      */
     public func finishPayment() async {
         do {
@@ -87,9 +93,7 @@ extension PaylikeEngine {
             prepareError(e: error)
         }
     }
-    /**
-     *
-     */
+    
     fileprivate func payment() async throws -> PaylikeClientResponse {
         try isNumberOfHintsRight()
         guard engineMode == .TEST

@@ -1,11 +1,11 @@
 import PaylikeClient
 import PaylikeRequest
 
-/**
- *
- */
 extension PaylikeEngine {
     
+    /**
+     * Resetting engine field to default
+     */
     public func resetEngine() {
         loggingFn(Loggingformat(t: "Resetting engine"))
         
@@ -17,6 +17,9 @@ extension PaylikeEngine {
         objectWillChange.send()
     }
     
+    /**
+     * Resetting engine field to default on MainActor
+     */
     public func resetEngine() async {
         await MainActor.run {
             resetEngine()

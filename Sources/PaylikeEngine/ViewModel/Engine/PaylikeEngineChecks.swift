@@ -1,6 +1,3 @@
-/**
- *
- */
 extension PaylikeEngine {
     
     internal func checkValidState(valid state: EngineState, callerFunc: String) throws {
