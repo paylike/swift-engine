@@ -13,7 +13,7 @@ public enum EngineState : String, Encodable {
     /**
      * Gets the expected number of hints to have at the actual state
      */
-    static func getNumberOfExpectedHints(state: Self) -> Int {
+    public static func getNumberOfExpectedHints(state: Self) -> Int {
         return { switch state {
             case .WAITING_FOR_INPUT:
                 return 0

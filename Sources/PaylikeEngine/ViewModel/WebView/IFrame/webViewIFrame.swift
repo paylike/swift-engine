@@ -1,7 +1,7 @@
 /**
  * Utility const to help the ThreeDS flow through the webView interactions.
  */
-let webViewIFrame =
+public let webViewIFrame =
 """
 <!DOCTYPE html>
 <html>

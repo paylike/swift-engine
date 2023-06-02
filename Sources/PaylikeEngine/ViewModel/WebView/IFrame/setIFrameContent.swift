@@ -1,9 +1,9 @@
 import Foundation
 
 /**
- *
+ * Sets the IFrame content to be able to be listended by HintsListener
  */
-func setIFrameContent(to content: String) -> String {
+public func setIFrameContent(to content: String) -> String {
     return """
     var iframe = document.getElementById('tdsiframe');
     iframe = iframe.contentWindow.document;
