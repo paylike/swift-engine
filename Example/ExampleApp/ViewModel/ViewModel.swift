@@ -5,10 +5,7 @@ import _PassKit_SwiftUI
 import Combine
 import Foundation
 
-/**
- *
- */
-internal class ViewModel: ObservableObject {
+class ViewModel: ObservableObject {
     
     /*
      * Const initial values for card payment
@@ -19,7 +16,7 @@ internal class ViewModel: ObservableObject {
     private let year = 2030
     private let paymentAmount = PaymentAmount(currency: .HUF, value: 1, exponent: 0)
     private let paymentTest = PaymentTest(
-        card: TestCard(status: .DISABLED)
+//        card: TestCard(status: .DISABLED)
     )
     
     /*
@@ -55,6 +52,7 @@ internal class ViewModel: ObservableObject {
 
     /**
      * Initialization solely depending on the given engine
+     *
      * @Default way is the given merchantId and test mode.
      */
     init(
@@ -66,9 +64,9 @@ internal class ViewModel: ObservableObject {
         setupPaymentRequest()
 
         
-        paylikeEngine.client.httpClient.loggingFn = { _ in }
-        paylikeEngine.client.loggingFn = { _ in }
-    
+//        paylikeEngine.client.httpClient.loggingFn = { _ in }
+//        paylikeEngine.client.loggingFn = { _ in }
+
         self.cancellables.insert(
             $paylikeEngine.sink(
                 receiveValue: { engine in
@@ -122,7 +120,6 @@ internal class ViewModel: ObservableObject {
     
     
     private func setupPaymentRequest() {
-        
         let total = PKPaymentSummaryItem(label: "Total", amount: 1, type: .final)
         request.merchantIdentifier = merchantId
         request.merchantCapabilities = [.capability3DS, .capabilityEMV]
@@ -131,13 +128,9 @@ internal class ViewModel: ObservableObject {
         request.currencyCode = CurrencyCodes.HUF.rawValue
         request.supportedNetworks = [.visa, .masterCard, .maestro]
         request.paymentSummaryItems = [.init(label: "Test Company recieving the payment", amount: .one, type: .final)]
-        
     }
     
-    /*
-     * Engine handling functions
-     */
-    public func setupAndStartPayment() {
+    func setupAndStartPayment() {
         Task {
             await paylikeEngine.addEssentialPaymentData(cardNumber: cardNumber, cvc: cvc, month: month, year: year)
             paylikeEngine.addDescriptionPaymentData(paymentAmount: paymentAmount, paymentTestData: paymentTest)
@@ -145,16 +138,14 @@ internal class ViewModel: ObservableObject {
         }
         setViewModelState(newState: .RUNNING)
     }
-    public func resetEngine() {
+    func resetEngine() {
         paylikeEngine.resetEngine()
     }
     
-    /*
-     * UI state handling public functions
-     */
-    public func setViewModelState(newState: ViewModelState) {
+    func setViewModelState(newState: ViewModelState) {
         viewModelState = newState
     }
+    
     private func resolveUIState(from engineState: EngineState) -> ViewModelState {
         return {
             switch engineState {

@@ -5,11 +5,6 @@ import PassKit
 typealias PaymentCompletionHandler = (Bool) -> Void
 
 class PaymentHandler: NSObject {
-    
-    public init(engine: PaylikeEngine) {
-        self.engine = engine
-    }
-    
     var engine: PaylikeEngine
     
     var paymentController: PKPaymentAuthorizationController?
@@ -17,8 +12,11 @@ class PaymentHandler: NSObject {
     var paymentStatus = PKPaymentAuthorizationStatus.failure
     var completionHandler: PaymentCompletionHandler?
     
+    init(engine: PaylikeEngine) {
+        self.engine = engine
+    }
+    
     func startPayment(completion: @escaping PaymentCompletionHandler) {
-        
         completionHandler = completion
         
         // Create our payment request
@@ -29,9 +27,8 @@ class PaymentHandler: NSObject {
         paymentRequest.currencyCode = CurrencyCodes.HUF.rawValue
         paymentRequest.merchantCapabilities = [.capability3DS]
         paymentRequest.supportedNetworks = [.visa, .masterCard, .maestro]
-        //        paymentRequest.requiredShippingContactFields = [.phoneNumber, .emailAddress]
+        // paymentRequest.requiredShippingContactFields = [.phoneNumber, .emailAddress]
 
-        
         // Display our payment request
         paymentController = PKPaymentAuthorizationController(paymentRequest: paymentRequest)
         paymentController?.delegate = self
@@ -47,7 +44,7 @@ class PaymentHandler: NSObject {
 }
 
 /*
- PKPaymentAuthorizationControllerDelegate conformance.
+ * PKPaymentAuthorizationControllerDelegate conformance.
  */
 extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
     
@@ -55,40 +52,33 @@ extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
     
     
     func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
-        
-        // Perform some very basic validation on the provided contact information
+//        Perform some very basic validation on the provided contact information
 //        if payment.shippingContact?.emailAddress == nil || payment.shippingContact?.phoneNumber == nil {
 //            paymentStatus = .failure
 //        } else {
-            // Here you would send the payment token to your server or payment provider to process
-            // Once processed, return an appropriate status in the completion handler (success, failure, etc)
+//            Here you would send the payment token to your server or payment provider to process
+//            Once processed, return an appropriate status in the completion handler (success, failure, etc)
 //            paymentStatus = .success
 //        }
         
         Task {
             
-            
             debugPrint("applePayToken payment: \(payment)")
-
             
             if
-                let token2 = String(data: payment.token.paymentData, encoding: .utf8),
-                let token = try? JSONDecoder().decode(ApplePayToken.self, from: payment.token.paymentData),
-                let data = token.data
+                let token2 = String(data: payment.token.paymentData, encoding: .utf8)
+//                let token = try? JSONDecoder().decode(ApplePayToken.self, from: payment.token.paymentData)
+//                let data = token.data
             {
 //                debugPrint("applePayToken token: \(token)")
 //                debugPrint("applePayToken data: \(data)")
                 debugPrint("applePayToken: \(token2)")
 
-
                 await engine.addEssentialPaymentData(applePayToken: token2)
                 engine.addAdditionalPaymentData(textData: "From Apple Pay")
                 engine.addDescriptionPaymentData(paymentAmount: try! PaymentAmount(currency: CurrencyCodes.HUF, double: 1.0), paymentTestData: PaymentTest())
-                
                 await engine.startPayment()
-                
                 NSLog("hello comp in paymentauthorizationController")
-                
             } else {
                 NSLog("hello fail in paymentauthorizationController")
                 paymentStatus = .failure
@@ -112,7 +102,6 @@ extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
     }
     
 }
-
 
 struct ApplePayToken: Decodable {
     let data: String?

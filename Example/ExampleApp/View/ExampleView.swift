@@ -4,19 +4,9 @@ import PassKit
 import SwiftUI
 import WebKit
 
-
-/**
- *
- */
 struct ExampleView: View {
     
-    /**
-     *
-     */
     @StateObject private var viewModel = ViewModel(engine: PaylikeEngine(merchantID: merchantId, engineMode: .TEST))
-    /**
-     *
-     */
     var body: some View {
         NavigationView {
             VStack {
@@ -71,14 +61,8 @@ struct ExampleView: View {
                   dismissButton: .default(Text("Dismiss"))
             )
         }
-        
-        
-        
     }
 }
-
-
-
 
 struct PaylikeButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -92,9 +76,6 @@ struct PaylikeButtonStyle: ButtonStyle {
     }
 }
 
-/**
- * Previewing the current UI
- */
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ExampleView()

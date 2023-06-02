@@ -1,9 +1,6 @@
 import PassKit
 import SwiftUI
 
-/**
- * 
- */
 struct ApplePayButton: View {
     
     let paymentHandler: PaymentHandler
@@ -22,20 +19,20 @@ struct ApplePayButton: View {
     }
 }
 
- struct PaymentButtonStyle: ButtonStyle {
+struct PaymentButtonStyle: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         return PaymentButtonHelper()
     }
 }
 
- struct PaymentButtonHelper: View {
+struct PaymentButtonHelper: View {
     var body: some View {
         PaymentButtonRepresentable()
             .frame(minWidth: 100, maxWidth: 400)
     }
 }
 
- extension PaymentButtonHelper {
+extension PaymentButtonHelper {
     struct PaymentButtonRepresentable: UIViewRepresentable {
         
         var button: PKPaymentButton {
