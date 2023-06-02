@@ -4,4 +4,4 @@
 let merchantId = "YOUR_KEY"
 let E2E_DISABLED = merchantId == "YOUR_KEY"
 
-let applePayMerchantId = "merchant.paylike.example"
+let applePayMerchantId = "YOUR_applePayMerchantId"
