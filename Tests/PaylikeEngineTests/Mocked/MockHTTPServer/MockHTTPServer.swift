@@ -8,14 +8,26 @@ internal class MockHTTPServer {
     /*
      * Tokenization mock data
      */
-    internal let tokenization = "tokenized+"
+    let tokenization = "tokenized+"
     
     /*
      * createPayment mock data
      */
-    internal let serverHints = ["hint0", "hint1", "hint2"]
-    internal let threeDSMethodData = "threeDSMethodData"
-    internal let htmlBodyString = "htmlBodyString"
+    let serverHints = [
+        "hint1",
+        "hint2",
+        "hint3",
+        "hint4",
+        "hint5",
+        "hint6",
+        "hint7",
+        "hint8",
+        "hint9",
+        "hint10",
+    ]
+    let threeDSMethodData = "threeDSMethodData"
+    let htmlBodyString = "htmlBodyString"
+    let authorizationId = "authorizationId"
     
     private let server: HttpServer
     
@@ -47,6 +59,7 @@ internal class MockHTTPServer {
                 return .internalServerError
             }
         }
+        
         server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/payments"] = { request in
             let bodyData = Data(request.body)
             do {
@@ -80,6 +93,26 @@ internal class MockHTTPServer {
                             ChallengeResponse(name: "tds-fingerprint", type: .BACKGROUND_IFRAME, path: "/payments/challenges/tds-fingerprint"),
                             ChallengeResponse(name: "fingerprint", type: .BACKGROUND_IFRAME, path: "/payments/challenges/fingerprint")
                         ]
+                    case 6:
+                        // after first webview
+                        createPaymentResponse.challenges = [
+                            ChallengeResponse(name: "tds-pre-challenge", type: .BACKGROUND_IFRAME, path: "/payments/challenges/tds-pre-challenge"),
+                        ]
+                    case 7:
+                        createPaymentResponse.challenges = [
+                            ChallengeResponse(name: "tds-challenge", type: .BACKGROUND_IFRAME, path: "/payments/challenges/tds-challenge"),
+                        ]
+                    case 8:
+                        // after second webview
+                        createPaymentResponse.challenges = [
+                            ChallengeResponse(name: "tds-post-challenge", type: .BACKGROUND_IFRAME, path: "/payments/challenges/tds-post-challenge"),
+                        ]
+                    case 9:
+                        createPaymentResponse.challenges = [
+                            ChallengeResponse(name: "authorize", type: .FETCH, path: "/payments/challenges/authorize"),
+                        ]
+                    case 10:
+                        createPaymentResponse.authorizationId = self.authorizationId
                     default:
                         print("Caught server error: No right amount of hints")
                         return .internalServerError
@@ -91,6 +124,8 @@ internal class MockHTTPServer {
                 return .internalServerError
             }
         }
+        
+        // 1st client sends to these endpoints
         server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/payments/challenges/authorize-integration"] = { request in
             let bodyData = Data(request.body)
             do {
@@ -195,6 +230,147 @@ internal class MockHTTPServer {
             }
             return .ok(.data(responseEncoded ,contentType: nil))
         }
+        
+        // 1st webView sends to these endpoint
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/3dsecure/v2/tds-fingerprint-frame"] = { _ in
+            return .ok(.text(self.serverHints[3]))
+        }
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/3dsecure/v2/terminate"] = { _ in
+            return .ok(.text(self.serverHints[4]))
+        }
+        
+        // 2nd client sends to these endpoints
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/payments/challenges/tds-pre-challenge"] = { request in
+            let bodyData = Data(request.body)
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: bodyData, options: .mutableContainers) as? [String: Any] else {
+                    print("Caught server error: Request body deserialization failed")
+                    return .internalServerError
+                }
+                guard let requestHints: [String] = json["hints"] as? [String] else {
+                    print("Caught server error: No hints field")
+                    return .internalServerError
+                }
+                guard requestHints.count == 6 else {
+                    print("Caught server error: Wrong amount of hints received")
+                    return .internalServerError
+                }
+                var createPaymentResponse = CreatePaymentResponse()
+                createPaymentResponse.hints = [String]()
+                createPaymentResponse.hints?.append(self.serverHints[6])
+                let responseEncoded = try JSONEncoder().encode(createPaymentResponse)
+                return .ok(.data(responseEncoded ,contentType: nil))
+            } catch {
+                print("Caught server error: \(error)")
+                return .internalServerError
+            }
+        }
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/payments/challenges/tds-challenge"] = { request in
+            let bodyData = Data(request.body)
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: bodyData, options: .mutableContainers) as? [String: Any] else {
+                    print("Caught server error: Request body deserialization failed")
+                    return .internalServerError
+                }
+                guard let requestHints: [String] = json["hints"] as? [String] else {
+                    print("Caught server error: No hints field")
+                    return .internalServerError
+                }
+                guard requestHints.count == 7 else {
+                    print("Caught server error: Wrong amount of hints received")
+                    return .internalServerError
+                }
+                var createPaymentResponse = CreatePaymentResponse()
+                guard var urlComponents = URLComponents(url: try getPaymentEndpointURL(), resolvingAgainstBaseURL: false) else {
+                    print("Caught server error: URL parsing error in tds-fingerprint endpoint")
+                    return .internalServerError
+                }
+                urlComponents.path = "/3dsecure/v2/challenge"
+                createPaymentResponse.action = urlComponents.string
+                createPaymentResponse.method = "POST"
+                createPaymentResponse.fields = [
+                    self.threeDSMethodData: self.threeDSMethodData
+                ]
+                let responseEncoded = try JSONEncoder().encode(createPaymentResponse)
+                return .ok(.data(responseEncoded ,contentType: nil))
+            } catch {
+                print("Caught server error: \(error)")
+                return .internalServerError
+            }
+        }
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/3dsecure/v2/challenge"] = { request in
+            let bodyData = Data(request.body)
+            guard let stringBody = String(data: bodyData, encoding: .utf8) else {
+                print("Caught server error: Request body invalid")
+                return .internalServerError
+            }
+            guard stringBody == "\(self.threeDSMethodData)=\(self.threeDSMethodData)" else {
+                print("Caught server error: Got request body string invalid")
+                return .internalServerError
+            }
+            guard let responseEncoded = self.htmlBodyString.data(using: .utf8) else {
+                print("Caught server error: String to data parse failed")
+                return .internalServerError
+            }
+            return .ok(.data(responseEncoded ,contentType: nil))
+        }
+
+        // 2nd webView sends to these endpoint
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/3dsecure/v2/tds-challenge-terminate"] = { _ in
+            return .ok(.text(self.serverHints[7]))
+        }
+
+        // 3rd client sends to these endpoints
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/payments/challenges/tds-post-challenge"] = { request in
+            let bodyData = Data(request.body)
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: bodyData, options: .mutableContainers) as? [String: Any] else {
+                    print("Caught server error: Request body deserialization failed")
+                    return .internalServerError
+                }
+                guard let requestHints: [String] = json["hints"] as? [String] else {
+                    print("Caught server error: No hints field")
+                    return .internalServerError
+                }
+                guard requestHints.count == 8 else {
+                    print("Caught server error: Wrong amount of hints received")
+                    return .internalServerError
+                }
+                var createPaymentResponse = CreatePaymentResponse()
+                createPaymentResponse.hints = [String]()
+                createPaymentResponse.hints?.append(self.serverHints[8])
+                let responseEncoded = try JSONEncoder().encode(createPaymentResponse)
+                return .ok(.data(responseEncoded ,contentType: nil))
+            } catch {
+                print("Caught server error: \(error)")
+                return .internalServerError
+            }
+        }
+        server[MockEndpoints.CREATE_PAYMENT_API.rawValue + "/payments/challenges/authorize"] = { request in
+            let bodyData = Data(request.body)
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: bodyData, options: .mutableContainers) as? [String: Any] else {
+                    print("Caught server error: Request body deserialization failed")
+                    return .internalServerError
+                }
+                guard let requestHints: [String] = json["hints"] as? [String] else {
+                    print("Caught server error: No hints field")
+                    return .internalServerError
+                }
+                guard requestHints.count == 9 else {
+                    print("Caught server error: Wrong amount of hints received")
+                    return .internalServerError
+                }
+                var createPaymentResponse = CreatePaymentResponse()
+                createPaymentResponse.hints = [String]()
+                createPaymentResponse.hints?.append(self.serverHints[9])
+                let responseEncoded = try JSONEncoder().encode(createPaymentResponse)
+                return .ok(.data(responseEncoded ,contentType: nil))
+            } catch {
+                print("Caught server error: \(error)")
+                return .internalServerError
+            }
+        }
     }
     
     internal func start(_ port: Int) throws {
@@ -205,3 +381,38 @@ internal class MockHTTPServer {
         server.stop()
     }
 }
+
+
+// first client call
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/authorize-integration
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/tds-enrolled
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/tds-fingerprint
+// https://b.paylike.io/3dsecure/v2/method
+
+// webView calls
+// https://b.paylike.io/3dsecure/v2/tds-fingerprint-frame
+// https://b.paylike.io/3dsecure/v2/terminate
+// webview listening to 3 more hints
+
+// second client call
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/tds-pre-challenge
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/tds-challenge
+// https://b.paylike.io/3dsecure/v2/challenge
+
+// interaction
+
+// webView calls
+// https://b.paylike.io/payments/3dsecure/v2/tds-challenge-terminate
+
+// third client call
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/tds-post-challenge
+// https://b.paylike.io/payments
+// https://b.paylike.io/payments/challenges/authorize
+// https://b.paylike.io/payments
+
