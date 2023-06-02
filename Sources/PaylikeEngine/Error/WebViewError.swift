@@ -5,6 +5,7 @@ import Foundation
  */
 public enum WebViewError: Error, LocalizedError {
     case NotImplemented
+    case HintsListenerError
     
     /**
      * Localized text of the error messages
@@ -16,6 +17,8 @@ public enum WebViewError: Error, LocalizedError {
                 
             case .NotImplemented:
                 return "NotImplemented"
+            case .HintsListenerError:
+                return "Error occured in WebView's HintsListener"
         }
     }
 }
