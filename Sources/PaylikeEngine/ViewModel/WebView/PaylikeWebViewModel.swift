@@ -6,6 +6,10 @@ import WebKit
  * Public protocol to provide ViewModel for the WebVIew in case of ThreeDS payment flow
  */
 public protocol WebViewModel: ObservableObject {
+    
+    var engine: (any Engine)? { get }
+    var webView: WKWebView? { get }
+
     var paylikeWebView: PaylikeWebView? { get }
     var shouldRenderWebView: Bool { get }
     
@@ -18,8 +22,19 @@ public protocol WebViewModel: ObservableObject {
  */
 public final class PaylikeWebViewModel: WebViewModel {
     
-    weak var engine: PaylikeEngine?
-    var webView: WKWebView?
+    
+    
+    weak var _engine: PaylikeEngine?
+    public var engine: (any Engine)? {
+        return _engine
+    }
+    
+    
+    var _webView: WKWebView?
+    public var webView: WKWebView? {
+        return _webView
+    }
+    
     private var _paylikeWebView: PaylikeWebView?
     public var paylikeWebView: PaylikeWebView? {
         return _paylikeWebView
@@ -32,28 +47,36 @@ public final class PaylikeWebViewModel: WebViewModel {
     private var cancellables: Set<AnyCancellable> = []
 
     public init(engine: PaylikeEngine) {
-        self.engine = engine
+        self._engine = engine
     }
     
     /**
      * Initialization of webView with hintsListener
      */
     public func createWebView() {
-        hintsListener = HintsListener(vm: self)
-        webView = initWebView(hintsListener: hintsListener!)
+        hintsListener = HintsListener(webViewViewModel: self)
+        _webView = initWebView(hintsListener: hintsListener!)
         setUpEngineListening()
         _paylikeWebView = PaylikeWebView(webView: webView!)
+        
+        if let engine = _engine {
+            engine.loggingFn(Loggingformat(t: "WebView created", state: engine.state))
+        }
     }
     
     /**
      * Reset webView
      */
     public func dropWebView() {
-        webView = nil
+        _webView = nil
         _paylikeWebView = nil
         hintsListener = nil
         cancellables = []
         _shouldRenderWebView = false
+        
+        if let engine = _engine {
+            engine.loggingFn(Loggingformat(t: "WebView created", state: engine.state))
+        }
     }
     
     private func initWebView(hintsListener: HintsListener) -> WKWebView {
@@ -70,7 +93,7 @@ public final class PaylikeWebViewModel: WebViewModel {
     }
     
     private func setUpEngineListening() {
-        self.engine!.$state
+        self._engine!.$_state
             .sink(receiveValue: { state in
                 switch state {
                     case .WAITING_FOR_INPUT:

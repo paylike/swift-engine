@@ -1,17 +1,60 @@
+import AnyCodable
+import Foundation
 import PaylikeClient
 import PaylikeRequest
-import Foundation
+
+/**
+ * Paylike engine protocol defining the minimal required fields and public API
+ */
+public protocol Engine: ObservableObject {
+    
+    var client: Client { get set }
+    var webViewModel: (any WebViewModel)? { get set }
+    
+    var state: EngineState { get }
+    var error: EngineErrorObject? { get }
+    var repository: EngineReposity { get set }
+
+    func addEssentialPaymentData(applePayToken: String) async
+    func addEssentialPaymentData(cardNumber: String, cvc: String, month: Int, year: Int) async
+    func addDescriptionPaymentData(paymentAmount: PaymentAmount?, paymentPlanDataList: [PaymentPlan]?, paymentUnplannedData: PaymentUnplanned?, paymentTestData: PaymentTest?)
+    func addAdditionalPaymentData(textData: String?, customData: AnyEncodable?)
+    
+    func resetEngine()
+    func prepareError(e: Error)
+    
+    func startPayment() async
+    func continuePayment() async
+    func finishPayment() async
+}
+
 
 /**
  * Paylike engine wrapper class to support Paylike transactions towards the API
  */
-public class PaylikeEngine: ObservableObject {
+public final class PaylikeEngine: Engine {
     
     public var merchantID: String
     
-    public var client: Client = PaylikeClient()
+    private var _client: Client = PaylikeClient()
+    public var client: any Client {
+        get {
+            return _client
+        }
+        set {
+            _client = newValue
+        }
+    }
     
-    public var webViewModel: (any WebViewModel)?
+    private var _webViewModel: (any WebViewModel)?
+    public var webViewModel: (any WebViewModel)? {
+        get {
+            return _webViewModel
+        }
+        set {
+            _webViewModel = newValue
+        }
+    }
     
     public var engineMode = EngineMode.TEST
     
@@ -22,9 +65,33 @@ public class PaylikeEngine: ObservableObject {
         debugPrint(obj)
     }
     
-    @Published internal(set) public var state = EngineState.WAITING_FOR_INPUT
-    @Published internal(set) public var error: EngineErrorObject?
-    @Published internal(set) public var repository = EngineReposity()
+    @Published var _state = EngineState.WAITING_FOR_INPUT
+    public internal (set) var state: EngineState {
+        get {
+            return _state
+        }
+        set {
+            _state = newValue
+        }
+    }
+    @Published var _error: EngineErrorObject?
+    public internal (set) var error: EngineErrorObject? {
+        get {
+            return _error
+        }
+        set {
+            _error = newValue
+        }
+    }
+    @Published var _repository = EngineReposity()
+    public var repository: EngineReposity {
+        get {
+            return _repository
+        }
+        set {
+            _repository = newValue
+        }
+    }
 
     /**
      * Initialize engine with the default parameters

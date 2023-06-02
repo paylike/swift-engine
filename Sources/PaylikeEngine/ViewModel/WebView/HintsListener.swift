@@ -1,37 +1,41 @@
 import WebKit
 
 /**
- *
+ * Public protocol to provide Listener interface for the WebView JS content
  */
-class HintsListener: NSObject, WKScriptMessageHandler {
+public protocol Listener {
+    init(webViewViewModel: any WebViewModel)
+    var handler: ((_ isReady: Bool, _ hints: [String]) -> Void) { get }
+}
+
+/**
+ * Listens to hints emitted by the WebView
+ */
+final class HintsListener: NSObject, WKScriptMessageHandler, Listener {
     private weak var engine: PaylikeEngine?
-    private weak var webView: WKWebView?
     private (set) internal var handler: ((_ isReady: Bool, _ hints: [String]) -> Void) = { _, _ in }
     
-    init(vm: PaylikeWebViewModel) {
+    public init(webViewViewModel: any WebViewModel) {
         super.init()
-        self.engine = vm.engine
-        self.webView = vm.webView
+        self.engine = (webViewViewModel.engine as! PaylikeEngine)
         
         self.handler = { isReady, hints in
             if isReady == true {
-                vm.webView!.evaluateJavaScript(setIFrameContent(to: vm.engine?.repository.htmlRepository ?? "")) { stuff, error in
-                    if let error = error {
-                        debugPrint("In HintsListener Handler evaluated JS error occured: \(error)")
-                    }
-                }
-                
+                webViewViewModel.webView!.evaluateJavaScript(setIFrameContent(to: (webViewViewModel.engine?.repository.htmlRepository!)!))
             } else if !hints.isEmpty {
                 self.saveNewHintsToEngine(hints: hints)
                 self.triggerEnginePaymentFunction()
+            }
+            else {
+                self.engine!.prepareError(e: WebViewError.HintsListenerError)
             }
         }
     }
         
     private func saveNewHintsToEngine(hints: [String]) {
         hints.forEach { hint in
-            if !engine!.repository.paymentRepository!.hints.contains(hint) {
-                engine!.repository.paymentRepository!.hints.append(hint)
+            if !engine!._repository.paymentRepository!.hints.contains(hint) {
+                engine!._repository.paymentRepository!.hints.append(hint)
             }
         }
     }
@@ -51,7 +55,7 @@ class HintsListener: NSObject, WKScriptMessageHandler {
         }
     }
     
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if let isReady = message.body as? String,
            isReady == "isReady" {
             handler(true, [])
@@ -60,7 +64,7 @@ class HintsListener: NSObject, WKScriptMessageHandler {
             handler(false, hints.hints)
         }
         else {
-            debugPrint("HintsListener error happended. The message body is: \(message.body)")
+            handler(false, [])
         }
     }
 }
