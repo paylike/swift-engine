@@ -7,13 +7,15 @@ extension PaylikeEngine {
      * Resetting engine field to default
      */
     public func resetEngine() {
-        loggingFn(Loggingformat(t: "Resetting engine"))
+        loggingFn(Loggingformat(t: "Resetting engine", state: self.state))
         
         state = EngineState.WAITING_FOR_INPUT
         error = nil
         repository = EngineReposity()
         webViewModel?.dropWebView()
         
+        loggingFn(Loggingformat(t: "Resetted engine", state: self.state))
+
         objectWillChange.send()
     }
     
@@ -26,20 +28,20 @@ extension PaylikeEngine {
         }
     }
     
-    internal func saveState(newState: EngineState) {
+    func saveState(newState: EngineState) {
         state = newState
         objectWillChange.send()
     }
-    internal func saveState(newState: EngineState) async {
+    func saveState(newState: EngineState) async {
         await MainActor.run {
             saveState(newState: newState)
         }
     }
     
-    internal func prepareError(e: Error) {
+    public func prepareError(e: Error) {
         saveState(newState: .ERROR)
         
-        loggingFn(Loggingformat(t: "Setting error object with: \(e)"))
+        loggingFn(Loggingformat(t: "Setting error object with: \(e)", state: self.state))
         
         error = EngineErrorObject(
             message: e.localizedDescription,
@@ -50,51 +52,51 @@ extension PaylikeEngine {
         )
         saveErrorObject(newErrorObject: error)
     }
-    internal func saveErrorObject(newErrorObject: EngineErrorObject?) {
+    func saveErrorObject(newErrorObject: EngineErrorObject?) {
         error = newErrorObject
         objectWillChange.send()
     }
-    internal func saveErrorObject(newErrorObject: EngineErrorObject?) async {
+    func saveErrorObject(newErrorObject: EngineErrorObject?) async {
         await MainActor.run {
             saveErrorObject(newErrorObject: newErrorObject)
         }
     }
     
-    internal func savePaymentRepository(newRepository: CreatePaymentRequest) {
+    func savePaymentRepository(newRepository: CreatePaymentRequest) {
         repository.paymentRepository = newRepository
         objectWillChange.send()
     }
-    internal func savePaymentRepository(newRepository: CreatePaymentRequest) async {
+    func savePaymentRepository(newRepository: CreatePaymentRequest) async {
         await MainActor.run {
             savePaymentRepository(newRepository: newRepository)
         }
     }
     
-    internal func saveHtmlRepository(newHtml: String?) {
+    func saveHtmlRepository(newHtml: String?) {
         repository.htmlRepository = newHtml
         objectWillChange.send()
     }
-    internal func saveHtmlRepository(newHtml: String?) async {
+    func saveHtmlRepository(newHtml: String?) async {
         await MainActor.run {
             saveHtmlRepository(newHtml: newHtml)
         }
     }
     
-    internal func saveTransactionIdRepository(newTransactionId: String?) {
+    func saveTransactionIdRepository(newTransactionId: String?) {
         repository.transactionId = newTransactionId
         objectWillChange.send()
     }
-    internal func saveTransactionIdRepository(newTransactionId: String?) async {
+    func saveTransactionIdRepository(newTransactionId: String?) async {
         await MainActor.run {
             saveTransactionIdRepository(newTransactionId: newTransactionId)
         }
     }
     
-    internal func saveAuthorizationIdRepository(newAuthorizationId: String?) {
+    func saveAuthorizationIdRepository(newAuthorizationId: String?) {
         repository.authorizationId = newAuthorizationId
         objectWillChange.send()
     }
-    internal func saveAuthorizationIdRepository(newAuthorizationId: String?) async {
+     func saveAuthorizationIdRepository(newAuthorizationId: String?) async {
         await MainActor.run {
             saveAuthorizationIdRepository(newAuthorizationId: newAuthorizationId)
         }

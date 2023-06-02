@@ -10,7 +10,7 @@ extension PaylikeEngine {
      * Stores the tokenized applePay token to the engine PaymentRepository.
      * [More information](https://github.com/paylike/api-reference/blob/main/payments/index.md)
      */
-    final public func addEssentialPaymentData(
+    public func addEssentialPaymentData(
         applePayToken: String
     ) async {
         do {
@@ -21,6 +21,8 @@ extension PaylikeEngine {
             paymentRepository.applepay = try await applePayToken
             
             await savePaymentRepository(newRepository: paymentRepository)
+            
+            loggingFn(Loggingformat(t: "Added ApplePay essential payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }
@@ -74,6 +76,8 @@ extension PaylikeEngine {
             paymentRepository.card = card
                     
             await savePaymentRepository(newRepository: paymentRepository)
+            
+            loggingFn(Loggingformat(t: "Added CardData essential payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }
@@ -102,6 +106,8 @@ extension PaylikeEngine {
             paymentRepository.test = paymentTestData
             
             savePaymentRepository(newRepository: paymentRepository)
+            
+            loggingFn(Loggingformat(t: "Added description payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }
@@ -125,6 +131,8 @@ extension PaylikeEngine {
             paymentRepository.custom = customData
             
             savePaymentRepository(newRepository: paymentRepository)
+            
+            loggingFn(Loggingformat(t: "Added additional payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }

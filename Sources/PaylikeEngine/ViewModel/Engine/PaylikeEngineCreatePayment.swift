@@ -13,7 +13,7 @@ extension PaylikeEngine {
             try checkValidState(valid: .WAITING_FOR_INPUT, callerFunc: #function)
             try areEssentialPaymentRepositoryFieldsAdded()
             
-            loggingFn(Loggingformat(t: "Starting payment"))
+            loggingFn(Loggingformat(t: "Starting payment", state: self.state))
             
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
@@ -31,6 +31,8 @@ extension PaylikeEngine {
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
+            
+            loggingFn(Loggingformat(t: "Started payment", state: self.state))
         } catch {
             prepareError(e: error)
         }
@@ -46,7 +48,7 @@ extension PaylikeEngine {
         do {
             try checkValidState(valid: .WEBVIEW_CHALLENGE_STARTED, callerFunc: #function)
             
-            loggingFn(Loggingformat(t: "Continuing payment"))
+            loggingFn(Loggingformat(t: "Continuing payment", state: self.state))
             
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
@@ -61,6 +63,8 @@ extension PaylikeEngine {
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
+            
+            loggingFn(Loggingformat(t: "Continued payment", state: self.state))
         } catch {
             prepareError(e: error)
         }
@@ -76,7 +80,7 @@ extension PaylikeEngine {
         do {
             try checkValidState(valid: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED, callerFunc: #function)
             
-            loggingFn(Loggingformat(t: "Finishing payment"))
+            loggingFn(Loggingformat(t: "Finishing payment", state: self.state))
             
             let response = try await payment()
             if response.HTMLBody != nil {
@@ -89,6 +93,8 @@ extension PaylikeEngine {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No transactionId nor authorizationId")
             }
             await saveState(newState: .SUCCESS)
+            
+            loggingFn(Loggingformat(t: "Finished payment", state: self.state))
         } catch {
             prepareError(e: error)
         }
