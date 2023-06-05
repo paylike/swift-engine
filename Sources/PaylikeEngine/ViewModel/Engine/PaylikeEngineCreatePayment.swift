@@ -100,6 +100,21 @@ extension PaylikeEngine {
         }
     }
     
+    func proceedPayment() {
+        switch state {
+            case .WEBVIEW_CHALLENGE_STARTED:
+                Task {
+                    await continuePayment()
+                }
+            case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
+                Task {
+                    await finishPayment()
+                }
+            default:
+                break
+        }
+    }
+    
     fileprivate func payment() async throws -> PaylikeClientResponse {
         try isNumberOfHintsRight()
         guard engineMode == .TEST

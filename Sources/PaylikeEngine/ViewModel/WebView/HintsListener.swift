@@ -24,7 +24,7 @@ final class HintsListener: NSObject, WKScriptMessageHandler, Listener {
                 webViewViewModel.webView!.evaluateJavaScript(setIFrameContent(to: (webViewViewModel.engine?.repository.htmlRepository!)!))
             } else if !hints.isEmpty {
                 self.saveNewHintsToEngine(hints: hints)
-                self.triggerEnginePaymentFunction()
+                self.triggerProceedPayment()
             }
             else {
                 self.engine!.prepareError(e: WebViewError.HintsListenerError)
@@ -40,19 +40,8 @@ final class HintsListener: NSObject, WKScriptMessageHandler, Listener {
         }
     }
     
-    private func triggerEnginePaymentFunction() {
-        switch engine!.state {
-            case .WEBVIEW_CHALLENGE_STARTED:
-                Task {
-                    await engine!.continuePayment()
-                }
-            case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
-                Task {
-                    await engine!.finishPayment()
-                }
-            default:
-                break
-        }
+    private func triggerProceedPayment() {
+        engine!.proceedPayment()
     }
     
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
