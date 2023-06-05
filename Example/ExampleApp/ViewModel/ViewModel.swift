@@ -16,6 +16,7 @@ class ViewModel: ObservableObject {
     private let year = 2030
     private let paymentAmount = PaymentAmount(currency: .HUF, value: 1, exponent: 0)
     private let paymentTest = PaymentTest(
+//  Here we can add different test scenarios
 //        card: TestCard(status: .DISABLED)
     )
     
