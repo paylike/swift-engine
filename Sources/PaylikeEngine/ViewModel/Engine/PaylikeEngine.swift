@@ -21,7 +21,7 @@ public protocol Engine: ObservableObject {
     func addAdditionalPaymentData(textData: String?, customData: AnyEncodable?)
     
     func resetEngine()
-    func prepareError(e: Error)
+    func prepareError(_ error: Error)
     
     func startPayment() async
     func continuePayment() async
@@ -65,7 +65,7 @@ public final class PaylikeEngine: Engine {
         debugPrint(obj)
     }
     
-    @Published var _state = EngineState.WAITING_FOR_INPUT
+    @Published public var _state = EngineState.WAITING_FOR_INPUT
     public internal (set) var state: EngineState {
         get {
             return _state
@@ -74,7 +74,7 @@ public final class PaylikeEngine: Engine {
             _state = newValue
         }
     }
-    @Published var _error: EngineErrorObject?
+    @Published public var _error: EngineErrorObject?
     public internal (set) var error: EngineErrorObject? {
         get {
             return _error
@@ -83,7 +83,7 @@ public final class PaylikeEngine: Engine {
             _error = newValue
         }
     }
-    @Published var _repository = EngineReposity()
+    @Published public var _repository = EngineReposity()
     public var repository: EngineReposity {
         get {
             return _repository

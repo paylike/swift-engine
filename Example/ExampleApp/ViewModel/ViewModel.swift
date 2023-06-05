@@ -74,10 +74,14 @@ class ViewModel: ObservableObject {
                         engine.$state
                             .sink(receiveValue: { state in
                                 if state != self.engineState {
-                                    self.engineState = state
-                                    self.setViewModelState(newState: self.resolveUIState(from: state))
-                                    debugPrint("State sink, engineState: \(state)")
-                                    debugPrint("State sink, UIState: \(state)")
+                                    Task {
+                                        await MainActor.run {
+                                            self.engineState = state
+                                            self.setViewModelState(newState: self.resolveUIState(from: state))
+                                            debugPrint("State sink, engineState: \(state)")
+                                            debugPrint("State sink, UIState: \(state)")
+                                        }
+                                    }
                                 }
                             })
                     )
@@ -86,29 +90,45 @@ class ViewModel: ObservableObject {
                             .sink(receiveValue: { error in
                                 self.engineError = error
                                 if let error = error {
-                                    self.alertTitle = "Error has occured"
-                                    self.alertDesc = ([error.clientError, error.engineError, error.httpClientError, error.webViewError] as [LocalizedError?])
-                                        .compactMap { $0?.errorDescription }
-                                        .first ?? ""
-                                    self.showingAlert = true
+                                    Task {
+                                        await MainActor.run {
+                                            self.alertTitle = "Error has occured"
+                                            self.alertDesc = ([error.clientError, error.engineError, error.httpClientError, error.webViewError] as [LocalizedError?])
+                                                .compactMap { $0?.errorDescription }
+                                                .first ?? ""
+                                            self.showingAlert = true
+                                            debugPrint("Error sink, error: \(error.message)")
+                                        }
+                                    }
                                 }
-                                debugPrint("Error sink, error: \(error?.message ?? "nil")")
                             })
                     )
                     self.cancellables.insert(
                         engine.$repository
                             .sink(receiveValue: { repo in
                                 if (repo.paymentRepository?.hints.count ?? 0) != self.hintsNumber {
-                                    self.hintsNumber = (repo.paymentRepository?.hints.count ?? 0)
-                                    debugPrint("Repo sink, hints: \(self.hintsNumber)")
+                                    Task {
+                                        await MainActor.run {
+                                            self.hintsNumber = (repo.paymentRepository?.hints.count ?? 0)
+                                            debugPrint("Repo sink, hints: \(self.hintsNumber)")
+                                        }
+                                    }
                                 }
                                 if repo.transactionId != self.transactionId {
-                                    self.transactionId = repo.transactionId
-                                    debugPrint("Repo sink, transactionId: \(self.transactionId ?? "no transactionId yet")")
+                                    Task {
+                                        await MainActor.run {
+                                            self.transactionId = repo.transactionId
+                                            debugPrint("Repo sink, transactionId: \(self.transactionId ?? "no transactionId yet")")
+                                        }
+                                    }
                                 }
                                 if repo.authorizationId != self.authorizationId {
-                                    self.authorizationId = repo.authorizationId
-                                    debugPrint("Repo sink, authorizationId: \(self.authorizationId ?? "no authorizationId yet")")
+                                    Task {
+                                        await MainActor.run {
+                                            self.authorizationId = repo.authorizationId
+                                            debugPrint("Repo sink, authorizationId: \(self.authorizationId ?? "no authorizationId yet")")
+                                        }
+                                    }
                                 }
                             })
                     )
@@ -138,7 +158,11 @@ class ViewModel: ObservableObject {
         setViewModelState(newState: .RUNNING)
     }
     func resetEngine() {
-        paylikeEngine.resetEngine()
+        Task {
+            await MainActor.run {
+                paylikeEngine.resetEngine()
+            }
+        }
     }
     
     func setViewModelState(newState: ViewModelState) {

@@ -17,24 +17,24 @@ extension PaylikeEngine {
             
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
-                await saveHtmlRepository(newHtml: htmlBody)
-                await saveState(newState: .WEBVIEW_CHALLENGE_STARTED)
+                saveHtmlRepository(newHtml: htmlBody)
+                saveState(newState: .WEBVIEW_CHALLENGE_STARTED)
                 await MainActor.run {
                     webViewModel?.createWebView()
                 }
             } else if let transactionId = response.createPaymentResponse.transactionId {
-                await saveTransactionIdRepository(newTransactionId: transactionId)
-                await saveState(newState: .SUCCESS)
+                saveTransactionIdRepository(newTransactionId: transactionId)
+                saveState(newState: .SUCCESS)
             } else if let authorizationId = response.createPaymentResponse.authorizationId {
-                await saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
-                await saveState(newState: .SUCCESS)
+                saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
+                saveState(newState: .SUCCESS)
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
             
             loggingFn(LoggingFormat(t: "Started payment", state: self.state))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -52,21 +52,21 @@ extension PaylikeEngine {
             
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
-                await saveHtmlRepository(newHtml: htmlBody)
-                await saveState(newState: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
+                saveHtmlRepository(newHtml: htmlBody)
+                 saveState(newState: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
             } else if let transactionId = response.createPaymentResponse.transactionId {
-                await saveTransactionIdRepository(newTransactionId: transactionId)
-                await saveState(newState: .SUCCESS)
+                saveTransactionIdRepository(newTransactionId: transactionId)
+                 saveState(newState: .SUCCESS)
             } else if let authorizationId = response.createPaymentResponse.authorizationId {
-                await saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
-                await saveState(newState: .SUCCESS)
+                saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
+                 saveState(newState: .SUCCESS)
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
             
             loggingFn(LoggingFormat(t: "Continued payment", state: self.state))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -86,17 +86,17 @@ extension PaylikeEngine {
             if response.HTMLBody != nil {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "Response should not be HTML")
             } else if let transactionId = response.createPaymentResponse.transactionId {
-                await saveTransactionIdRepository(newTransactionId: transactionId)
+                saveTransactionIdRepository(newTransactionId: transactionId)
             } else if let authorizationId = response.createPaymentResponse.authorizationId {
-                await saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
+                saveAuthorizationIdRepository(newAuthorizationId: authorizationId)
             } else {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No transactionId nor authorizationId")
             }
-            await saveState(newState: .SUCCESS)
+             saveState(newState: .SUCCESS)
             
             loggingFn(LoggingFormat(t: "Finished payment", state: self.state))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -129,7 +129,7 @@ extension PaylikeEngine {
         
         if let newHints = response.createPaymentResponse.hints {
             paymentRepository.hints = newHints
-            await savePaymentRepository(newRepository: paymentRepository)
+            savePaymentRepository(newRepository: paymentRepository)
         }
         return response
     }

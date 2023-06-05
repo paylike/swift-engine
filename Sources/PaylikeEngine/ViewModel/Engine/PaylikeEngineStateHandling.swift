@@ -9,96 +9,58 @@ extension PaylikeEngine {
     public func resetEngine() {
         loggingFn(LoggingFormat(t: "Resetting engine", state: self.state))
         
-        state = EngineState.WAITING_FOR_INPUT
-        error = nil
-        repository = EngineReposity()
+        saveState(newState: .WAITING_FOR_INPUT)
+        saveErrorObject(newErrorObject: nil)
+        savePaymentRepository(newRepository: nil)
+        saveHtmlRepository(newHtml: nil)
+        saveTransactionIdRepository(newTransactionId: nil)
+        saveAuthorizationIdRepository(newAuthorizationId: nil)
+        
         webViewModel?.dropWebView()
         
         loggingFn(LoggingFormat(t: "Resetted engine", state: self.state))
-
-        objectWillChange.send()
     }
-    
+        
     /**
-     * Resetting engine field to default on MainActor
+     * Sets the engine to error state and loads an `e` error object to it
      */
-    public func resetEngine() async {
-        await MainActor.run {
-            resetEngine()
-        }
-    }
-    
-    func saveState(newState: EngineState) {
-        state = newState
-        objectWillChange.send()
-    }
-    func saveState(newState: EngineState) async {
-        await MainActor.run {
-            saveState(newState: newState)
-        }
-    }
-    
-    public func prepareError(e: Error) {
+    public func prepareError(_ error: Error) {
         saveState(newState: .ERROR)
         
-        loggingFn(LoggingFormat(t: "Setting error object with: \(e)", state: self.state))
+        loggingFn(LoggingFormat(t: "Setting error object with: \(error)", state: self.state))
         
-        error = EngineErrorObject(
-            message: e.localizedDescription,
-            httpClientError: e as? HTTPClientError,
-            clientError: e as? ClientError,
-            webViewError: e as? WebViewError,
-            engineError: e as? EngineError
+        let errorObject = EngineErrorObject(
+            message: error.localizedDescription,
+            httpClientError: error as? HTTPClientError,
+            clientError: error as? ClientError,
+            webViewError: error as? WebViewError,
+            engineError: error as? EngineError
         )
-        saveErrorObject(newErrorObject: error)
+        saveErrorObject(newErrorObject: errorObject)
     }
+    
     func saveErrorObject(newErrorObject: EngineErrorObject?) {
         error = newErrorObject
         objectWillChange.send()
     }
-    func saveErrorObject(newErrorObject: EngineErrorObject?) async {
-        await MainActor.run {
-            saveErrorObject(newErrorObject: newErrorObject)
-        }
+    func saveState(newState: EngineState) {
+        state = newState
+        objectWillChange.send()
     }
-    
-    func savePaymentRepository(newRepository: CreatePaymentRequest) {
+    func savePaymentRepository(newRepository: CreatePaymentRequest?) {
         repository.paymentRepository = newRepository
         objectWillChange.send()
     }
-    func savePaymentRepository(newRepository: CreatePaymentRequest) async {
-        await MainActor.run {
-            savePaymentRepository(newRepository: newRepository)
-        }
-    }
-    
     func saveHtmlRepository(newHtml: String?) {
         repository.htmlRepository = newHtml
         objectWillChange.send()
     }
-    func saveHtmlRepository(newHtml: String?) async {
-        await MainActor.run {
-            saveHtmlRepository(newHtml: newHtml)
-        }
-    }
-    
     func saveTransactionIdRepository(newTransactionId: String?) {
         repository.transactionId = newTransactionId
         objectWillChange.send()
     }
-    func saveTransactionIdRepository(newTransactionId: String?) async {
-        await MainActor.run {
-            saveTransactionIdRepository(newTransactionId: newTransactionId)
-        }
-    }
-    
     func saveAuthorizationIdRepository(newAuthorizationId: String?) {
         repository.authorizationId = newAuthorizationId
         objectWillChange.send()
-    }
-     func saveAuthorizationIdRepository(newAuthorizationId: String?) async {
-        await MainActor.run {
-            saveAuthorizationIdRepository(newAuthorizationId: newAuthorizationId)
-        }
     }
 }

@@ -27,7 +27,7 @@ final class HintsListener: NSObject, WKScriptMessageHandler, Listener {
                 self.triggerProceedPayment()
             }
             else {
-                self.engine!.prepareError(e: WebViewError.HintsListenerError)
+                self.engine!.prepareError(WebViewError.HintsListenerError)
             }
         }
     }

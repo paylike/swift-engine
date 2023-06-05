@@ -54,7 +54,7 @@ extension PaymentHandler: PKPaymentAuthorizationControllerDelegate {
                 engine.addDescriptionPaymentData(paymentAmount: try! PaymentAmount(currency: CurrencyCodes.HUF, double: 1.0), paymentTestData: PaymentTest())
                 await engine.startPayment()
             } else {
-                engine.prepareError(e: EngineError.NotImplemented)
+                engine.prepareError(EngineError.NotImplemented)
                 paymentStatus = .failure
             }
             completion(paymentStatus)

@@ -19,7 +19,7 @@ class MockHintsListener: Listener {
                 self.triggerEnginePaymentFunction()
             }
             else {
-                self.engine!.prepareError(e: WebViewError.HintsListenerError)
+                self.engine!.prepareError(WebViewError.HintsListenerError)
             }
         }
     }

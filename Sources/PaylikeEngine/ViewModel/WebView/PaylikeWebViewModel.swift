@@ -73,9 +73,9 @@ public final class PaylikeWebViewModel: WebViewModel {
         hintsListener = nil
         cancellables = []
         _shouldRenderWebView = false
-        
+                
         if let engine = _engine {
-            engine.loggingFn(LoggingFormat(t: "WebView created", state: engine.state))
+            engine.loggingFn(LoggingFormat(t: "WebView dropped", state: engine.state))
         }
     }
     
@@ -101,7 +101,11 @@ public final class PaylikeWebViewModel: WebViewModel {
                     case .WEBVIEW_CHALLENGE_STARTED:
                         self._shouldRenderWebView = true
                     case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
-                        self.webView!.evaluateJavaScript(setIFrameContent(to: (self.engine?.repository.htmlRepository!)!))
+                        Task {
+                            await MainActor.run {
+                                self.webView!.evaluateJavaScript(setIFrameContent(to: (self.engine?.repository.htmlRepository!)!))
+                            }
+                        }
                     case .SUCCESS:
                         self._shouldRenderWebView = false
                     case .ERROR:

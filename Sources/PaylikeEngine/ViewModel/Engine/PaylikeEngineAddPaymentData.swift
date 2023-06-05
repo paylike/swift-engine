@@ -20,11 +20,11 @@ extension PaylikeEngine {
             async let applePayToken = client.tokenize(applePayData: TokenizeApplePayDataRequest(token: applePayToken))
             paymentRepository.applepay = try await applePayToken
             
-            await savePaymentRepository(newRepository: paymentRepository)
+            savePaymentRepository(newRepository: paymentRepository)
             
             loggingFn(LoggingFormat(t: "Added ApplePay essential payment data", state: self.state, paymentData: paymentRepository))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -47,7 +47,7 @@ extension PaylikeEngine {
                 expiry: CardExpiry(month: month, year: year)
             )
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -75,11 +75,11 @@ extension PaylikeEngine {
             let card = try await PaymentCard(number: numberToken, code: cvcToken, expiry: expiry)
             paymentRepository.card = card
                     
-            await savePaymentRepository(newRepository: paymentRepository)
+            savePaymentRepository(newRepository: paymentRepository)
             
             loggingFn(LoggingFormat(t: "Added CardData essential payment data", state: self.state, paymentData: paymentRepository))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -109,7 +109,7 @@ extension PaylikeEngine {
             
             loggingFn(LoggingFormat(t: "Added description payment data", state: self.state, paymentData: paymentRepository))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
@@ -134,7 +134,7 @@ extension PaylikeEngine {
             
             loggingFn(LoggingFormat(t: "Added additional payment data", state: self.state, paymentData: paymentRepository))
         } catch {
-            prepareError(e: error)
+            prepareError(error)
         }
     }
     
