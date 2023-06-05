@@ -68,10 +68,9 @@ struct PaylikeButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(width: 200, height: 40)
+            .frame(maxWidth: 200)
             .background(Color.accentColor)
             .foregroundColor(Color.primary)
-            .frame(maxWidth: 200)
-            .frame(height: 40)
             .cornerRadius(4)
     }
 }
