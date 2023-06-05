@@ -56,9 +56,9 @@ public final class PaylikeEngine: Engine {
         }
     }
     
-    public var engineMode = EngineMode.TEST
+    public var engineMode: EngineMode
     
-    public var loggingMode = LoggingMode.DEBUG
+    public var loggingMode: LoggingMode
     
     public var loggingFn: ((Encodable) -> Void) = { obj in
         print("Engine logger:", terminator: " ")
@@ -98,11 +98,12 @@ public final class PaylikeEngine: Engine {
      */
     public init(
         merchantID: String,
-        engineMode: EngineMode,
+        engineMode: EngineMode = .TEST,
         loggingMode: LoggingMode = .DEBUG
     ) {
         self.merchantID = merchantID
         self.engineMode = engineMode
+        self.loggingMode = loggingMode
         setLoggignMode(newMode: loggingMode)
         webViewModel = PaylikeWebViewModel(engine: self)
     }
