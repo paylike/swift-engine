@@ -22,7 +22,7 @@ extension PaylikeEngine {
             
             await savePaymentRepository(newRepository: paymentRepository)
             
-            loggingFn(Loggingformat(t: "Added ApplePay essential payment data", state: self.state, paymentData: paymentRepository))
+            loggingFn(LoggingFormat(t: "Added ApplePay essential payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }
@@ -77,7 +77,7 @@ extension PaylikeEngine {
                     
             await savePaymentRepository(newRepository: paymentRepository)
             
-            loggingFn(Loggingformat(t: "Added CardData essential payment data", state: self.state, paymentData: paymentRepository))
+            loggingFn(LoggingFormat(t: "Added CardData essential payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }
@@ -107,7 +107,7 @@ extension PaylikeEngine {
             
             savePaymentRepository(newRepository: paymentRepository)
             
-            loggingFn(Loggingformat(t: "Added description payment data", state: self.state, paymentData: paymentRepository))
+            loggingFn(LoggingFormat(t: "Added description payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }
@@ -132,7 +132,7 @@ extension PaylikeEngine {
             
             savePaymentRepository(newRepository: paymentRepository)
             
-            loggingFn(Loggingformat(t: "Added additional payment data", state: self.state, paymentData: paymentRepository))
+            loggingFn(LoggingFormat(t: "Added additional payment data", state: self.state, paymentData: paymentRepository))
         } catch {
             prepareError(e: error)
         }

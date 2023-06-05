@@ -7,14 +7,14 @@ extension PaylikeEngine {
      * Resetting engine field to default
      */
     public func resetEngine() {
-        loggingFn(Loggingformat(t: "Resetting engine", state: self.state))
+        loggingFn(LoggingFormat(t: "Resetting engine", state: self.state))
         
         state = EngineState.WAITING_FOR_INPUT
         error = nil
         repository = EngineReposity()
         webViewModel?.dropWebView()
         
-        loggingFn(Loggingformat(t: "Resetted engine", state: self.state))
+        loggingFn(LoggingFormat(t: "Resetted engine", state: self.state))
 
         objectWillChange.send()
     }
@@ -41,7 +41,7 @@ extension PaylikeEngine {
     public func prepareError(e: Error) {
         saveState(newState: .ERROR)
         
-        loggingFn(Loggingformat(t: "Setting error object with: \(e)", state: self.state))
+        loggingFn(LoggingFormat(t: "Setting error object with: \(e)", state: self.state))
         
         error = EngineErrorObject(
             message: e.localizedDescription,

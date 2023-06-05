@@ -60,7 +60,7 @@ public final class PaylikeWebViewModel: WebViewModel {
         _paylikeWebView = PaylikeWebView(webView: webView!)
         
         if let engine = _engine {
-            engine.loggingFn(Loggingformat(t: "WebView created", state: engine.state))
+            engine.loggingFn(LoggingFormat(t: "WebView created", state: engine.state))
         }
     }
     
@@ -75,7 +75,7 @@ public final class PaylikeWebViewModel: WebViewModel {
         _shouldRenderWebView = false
         
         if let engine = _engine {
-            engine.loggingFn(Loggingformat(t: "WebView created", state: engine.state))
+            engine.loggingFn(LoggingFormat(t: "WebView created", state: engine.state))
         }
     }
     
