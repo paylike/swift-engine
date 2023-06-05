@@ -46,28 +46,36 @@ class MockedWebViewModel: WebViewModel {
                     case .WAITING_FOR_INPUT:
                         break
                     case .WEBVIEW_CHALLENGE_STARTED:
-                        var hints: [String] = []
                         // webview js bridges to webViewModel and calls async, but we dont have webview now so we call it here
-                        self.jsCallbackToHintsListener(to: self.getMockURL(for: self.subPath1), completion: { hint in
-                            hints.append(hint)
-                            self.jsCallbackToHintsListener(to: self.getMockURL(for: self.subPath2), completion: { hint in
-                                hints.append(hint)
-                                hints.append(PaylikeEngineCreatePaymentTests.mockPaylikeServer.serverHints[5]) // cheating (not sure about one hint :) )
-                                self.hintsListener?.hintsListenerTrigger(hints: hints)
-                            })
-                        })
+                        Task {
+                            await MainActor.run {
+                                var hints: [String] = []
+                                self.jsCallbackToHintsListener(to: self.getMockURL(for: self.subPath1), completion: { hint in
+                                    hints.append(hint)
+                                    self.jsCallbackToHintsListener(to: self.getMockURL(for: self.subPath2), completion: { hint in
+                                        hints.append(hint)
+                                        hints.append(PaylikeEngineCreatePaymentTests.mockPaylikeServer.serverHints[5]) // cheating (not sure about one hint :) )
+                                        self.hintsListener?.hintsListenerTrigger(hints: hints)
+                                    })
+                                })
+                            }
+                        }
                         break
                     case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
                         // act like loading to webview
                         if PaylikeEngineCreatePaymentTests.mockPaylikeServer.htmlBodyString == self.engine?.repository.htmlRepository {
-//                            debugPrint("HTML is right!")
+                            //                            debugPrint("HTML is right!")
                         }
                         // act like tds interaction
-//                        debugPrint("User interaction!")
+                        //                        debugPrint("User interaction!")
                         // then just continue
-                        self.jsCallbackToHintsListener(to: self.getMockURL(for: self.subPath3), completion: { hint in
-                            self.hintsListener?.hintsListenerTrigger(hints: [hint])
-                        })
+                        Task {
+                            await MainActor.run {
+                                self.jsCallbackToHintsListener(to: self.getMockURL(for: self.subPath3), completion: { hint in
+                                    self.hintsListener?.hintsListenerTrigger(hints: [hint])
+                                })
+                            }
+                        }
                         break
                     case .SUCCESS:
                         break

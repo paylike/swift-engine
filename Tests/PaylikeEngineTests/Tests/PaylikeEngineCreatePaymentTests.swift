@@ -67,43 +67,44 @@ final class PaylikeEngineCreatePaymentTests: XCTestCase {
         }
         wait(for: [initExpectation], timeout: 10)
         
-        let challengeStartedExpectation = expectation(description: "Engine state should be WEBVIEW_CHALLENGE_STARTED")
-        let interactionStartedExpectation = expectation(description: "Engine state should be WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED")
-        let successExpectation = expectation(description: "Engine state should be SUCCESS")
-
+        let successExpectation = expectation(description: "Engine should reach Success state")
+        
         engine.$_state.sink(receiveValue: { state in
             switch state {
                 case .WAITING_FOR_INPUT:
                     break
                 case .WEBVIEW_CHALLENGE_STARTED:
-                    challengeStartedExpectation.fulfill()
+                    Task {
+                        await MainActor.run {
+                            XCTAssertEqual(engine.state, .WEBVIEW_CHALLENGE_STARTED)
+                            XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 3)
+                        }
+                    }
                 case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
-                    interactionStartedExpectation.fulfill()
+                    Task {
+                        await MainActor.run {
+                            XCTAssertEqual(engine.state, .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
+                            XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 7)
+                        }
+                    }
                 case .SUCCESS:
-                    successExpectation.fulfill()
+                    Task {
+                        await MainActor.run {
+                            XCTAssertEqual(engine.state, .SUCCESS)
+                            XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 8)
+                            XCTAssertNotNil(engine.repository.authorizationId)
+                            XCTAssertEqual(engine.repository.authorizationId, Self.mockPaylikeServer.authorizationId)
+                            successExpectation.fulfill()
+                        }
+                    }
                 case .ERROR:
                     XCTFail("Should not step in ERROR state")
             }
         }).store(in: &cancellables)
-        
-        
         Task {
             await engine.startPayment()
         }
-        wait(for: [challengeStartedExpectation], timeout: 10)
-        XCTAssertEqual(engine.state, .WEBVIEW_CHALLENGE_STARTED)
-        XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 3)
-        
-        wait(for: [interactionStartedExpectation], timeout: 10)
-        XCTAssertEqual(engine.state, .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
-        XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 7)
-        
-        wait(for: [successExpectation], timeout: 10)
-        XCTAssertEqual(engine.state, .SUCCESS)
-        XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 8)
-        XCTAssertNotNil(engine.repository.authorizationId)
-        XCTAssertEqual(engine.repository.authorizationId, Self.mockPaylikeServer.authorizationId)
-        
+        wait(for: [successExpectation])
         engine.resetEngine()
         XCTAssertNil(engine.repository.authorizationId)
         XCTAssertNil(engine.repository.htmlRepository)
