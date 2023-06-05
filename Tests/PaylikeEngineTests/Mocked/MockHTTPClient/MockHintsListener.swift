@@ -1,5 +1,5 @@
 import Foundation
-import PaylikeEngine
+@testable import PaylikeEngine
 
 class MockHintsListener: Listener {
     
@@ -16,7 +16,7 @@ class MockHintsListener: Listener {
         self._handler = { _, hints in
             if !hints.isEmpty {
                 self.saveNewHintsToEngine(hints: hints)
-                self.triggerEnginePaymentFunction()
+                self.triggerProceedPayment()
             }
             else {
                 self.engine!.prepareError(WebViewError.HintsListenerError)
@@ -32,19 +32,8 @@ class MockHintsListener: Listener {
         }
     }
     
-    private func triggerEnginePaymentFunction() {
-        switch engine!.state {
-            case .WEBVIEW_CHALLENGE_STARTED:
-                Task {
-                    await engine!.continuePayment()
-                }
-            case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
-                Task {
-                    await engine!.finishPayment()
-                }
-            default:
-                break
-        }
+    private func triggerProceedPayment() {
+        engine!.proceedPayment()
     }
     
     func hintsListenerTrigger(hints: [String]) {
