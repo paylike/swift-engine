@@ -104,7 +104,7 @@ final class PaylikeEngineCreatePaymentTests: XCTestCase {
         Task {
             await engine.startPayment()
         }
-        wait(for: [successExpectation])
+        wait(for: [successExpectation], timeout: 10)
         engine.resetEngine()
         XCTAssertNil(engine.repository.authorizationId)
         XCTAssertNil(engine.repository.htmlRepository)
