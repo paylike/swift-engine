@@ -138,7 +138,7 @@ extension PaylikeEngine {
         }
     }
     
-    private func initialisePaymentRepositoryIfNil() -> CreatePaymentRequest {
+    fileprivate func initialisePaymentRepositoryIfNil() -> CreatePaymentRequest {
         return repository.paymentRepository ?? CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: self.merchantID))
     }
 }
