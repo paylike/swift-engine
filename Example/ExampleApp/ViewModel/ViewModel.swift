@@ -64,9 +64,7 @@ class ViewModel: ObservableObject {
         self.paymentHandler = PaymentHandler(engine: engine)
         setupPaymentRequest()
 
-        
-//        paylikeEngine.client.httpClient.loggingFn = { _ in }
-//        paylikeEngine.client.loggingFn = { _ in }
+        paylikeEngine.setLoggignMode(newMode: .RELEASE)
 
         self.cancellables.insert(
             $paylikeEngine.sink(
