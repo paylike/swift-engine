@@ -21,7 +21,7 @@ To get more familiar with our server API you can find here the [official documen
 ## PaylikeEngine
 
 The core component of the payment flow.
-Essentially designed to be event based to allow as much flexibility as possible on the implementer side.
+Essentially designed to be event based to allow as much flexibility as possible on the user side.
 
 Example payment initiation using card:
 ```swift
@@ -71,7 +71,7 @@ import PaylikeEngine
 
 struct ExampleView: View {
     
-    @StateObject private val engine = PaylikeEngine(merchantID: "merchantId", engineMode: .TEST)
+    @StateObject private var engine = PaylikeEngine(merchantID: "merchantId", engineMode: .TEST)
 
     var body: some View {
         if engine.webViewModel!.shouldRenderWebView {
@@ -86,7 +86,7 @@ For testing usage check out the example [here](/#sample-application).
 
 ### Understanding 3D Secure
 
-TDS is required to execute the payment flow and it is a core part of accepting payments online. Every bank is required by financial laws to provide this methodology for their customers in order to achieve higher security measures.
+3D Secure is required to execute the payment flow and it is a core part of accepting payments online. Every bank is required by financial laws to provide this methodology for their customers in order to achieve higher security measures.
 
 ## Sample application
 
@@ -94,4 +94,4 @@ In the [example directory](/tree/main/ExampleApp) you can find a simple applicat
 
 You need to [register a merchant account](https://paylike.io/sign-up) with Paylike before you can use the sample application. Once you have created your account you can create a new client ID for yourself and use it in the sandbox environment.
 
-You have to enter your client ID to `merchantId` to successfully initiate payment in the example app.
+You have to enter your client ID to `merchantId` to initiate payment successfully in the example app.
