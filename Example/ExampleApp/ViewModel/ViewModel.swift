@@ -71,7 +71,7 @@ class ViewModel: ObservableObject {
                 receiveValue: { engine in
                     self.objectWillChange.send()
                     self.cancellables.insert(
-                        engine.$state
+                        engine.state.projectedValue
                             .sink(receiveValue: { state in
                                 if state != self.engineState {
                                     Task {
@@ -85,53 +85,53 @@ class ViewModel: ObservableObject {
                                 }
                             })
                     )
-                    self.cancellables.insert(
-                        engine.$error
-                            .sink(receiveValue: { error in
-                                self.engineError = error
-                                if let error = error {
-                                    Task {
-                                        await MainActor.run {
-                                            self.alertTitle = "Error has occured"
-                                            self.alertDesc = ([error.clientError, error.engineError, error.httpClientError, error.webViewError] as [LocalizedError?])
-                                                .compactMap { $0?.errorDescription }
-                                                .first ?? ""
-                                            self.showingAlert = true
-                                            debugPrint("Error sink, error: \(error.message)")
-                                        }
-                                    }
-                                }
-                            })
-                    )
-                    self.cancellables.insert(
-                        engine.$repository
-                            .sink(receiveValue: { repo in
-                                if (repo.paymentRepository?.hints.count ?? 0) != self.hintsNumber {
-                                    Task {
-                                        await MainActor.run {
-                                            self.hintsNumber = (repo.paymentRepository?.hints.count ?? 0)
-                                            debugPrint("Repo sink, hints: \(self.hintsNumber)")
-                                        }
-                                    }
-                                }
-                                if repo.transactionId != self.transactionId {
-                                    Task {
-                                        await MainActor.run {
-                                            self.transactionId = repo.transactionId
-                                            debugPrint("Repo sink, transactionId: \(self.transactionId ?? "no transactionId yet")")
-                                        }
-                                    }
-                                }
-                                if repo.authorizationId != self.authorizationId {
-                                    Task {
-                                        await MainActor.run {
-                                            self.authorizationId = repo.authorizationId
-                                            debugPrint("Repo sink, authorizationId: \(self.authorizationId ?? "no authorizationId yet")")
-                                        }
-                                    }
-                                }
-                            })
-                    )
+//                    self.cancellables.insert(
+//                        engine.$error
+//                            .sink(receiveValue: { error in
+//                                self.engineError = error
+//                                if let error = error {
+//                                    Task {
+//                                        await MainActor.run {
+//                                            self.alertTitle = "Error has occured"
+//                                            self.alertDesc = ([error.clientError, error.engineError, error.httpClientError, error.webViewError] as [LocalizedError?])
+//                                                .compactMap { $0?.errorDescription }
+//                                                .first ?? ""
+//                                            self.showingAlert = true
+//                                            debugPrint("Error sink, error: \(error.message)")
+//                                        }
+//                                    }
+//                                }
+//                            })
+//                    )
+//                    self.cancellables.insert(
+//                        engine.$repository
+//                            .sink(receiveValue: { repo in
+//                                if (repo.paymentRepository?.hints.count ?? 0) != self.hintsNumber {
+//                                    Task {
+//                                        await MainActor.run {
+//                                            self.hintsNumber = (repo.paymentRepository?.hints.count ?? 0)
+//                                            debugPrint("Repo sink, hints: \(self.hintsNumber)")
+//                                        }
+//                                    }
+//                                }
+//                                if repo.transactionId != self.transactionId {
+//                                    Task {
+//                                        await MainActor.run {
+//                                            self.transactionId = repo.transactionId
+//                                            debugPrint("Repo sink, transactionId: \(self.transactionId ?? "no transactionId yet")")
+//                                        }
+//                                    }
+//                                }
+//                                if repo.authorizationId != self.authorizationId {
+//                                    Task {
+//                                        await MainActor.run {
+//                                            self.authorizationId = repo.authorizationId
+//                                            debugPrint("Repo sink, authorizationId: \(self.authorizationId ?? "no authorizationId yet")")
+//                                        }
+//                                    }
+//                                }
+//                            })
+//                    )
                 }
             )
         )

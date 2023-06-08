@@ -1,8 +1,8 @@
 extension PaylikeEngine {
     
     internal func checkValidState(valid state: EngineState, callerFunc: String) throws {
-        guard self.state == state else {
-            throw EngineError.InvalidEngineState(caller: callerFunc, actual: self.state, expected: state)
+        guard self.internalState == state else {
+            throw EngineError.InvalidEngineState(caller: callerFunc, actual: self.internalState, expected: state)
         }
     }
     
@@ -20,7 +20,7 @@ extension PaylikeEngine {
     internal func isNumberOfHintsRight() throws {
         try isPaymentRepositoryInitialised()
         let actual = repository.paymentRepository!.hints.count
-        let expected = EngineState.getNumberOfExpectedHints(state: self.state)
+        let expected = EngineState.getNumberOfExpectedHints(state: self.internalState)
         guard actual == expected else {
             throw EngineError.WrongAmountOfHints(actual: actual, expected: expected)
         }

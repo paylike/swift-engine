@@ -1,4 +1,5 @@
 import AnyCodable
+import Combine
 import Foundation
 import PaylikeClient
 import PaylikeRequest
@@ -11,7 +12,7 @@ public protocol Engine: ObservableObject {
     var client: Client { get set }
     var webViewModel: (any WebViewModel)? { get set }
     
-    var state: EngineState { get }
+    var state: Published<EngineState> { get }
     var error: EngineErrorObject? { get }
     var repository: EngineReposity { get set }
 
@@ -65,22 +66,24 @@ public final class PaylikeEngine: Engine {
         debugPrint(obj)
     }
     
-    @Published var _state = EngineState.WAITING_FOR_INPUT
-    public internal (set) var state: EngineState {
+    @Published var internalState = EngineState.WAITING_FOR_INPUT
+    public /*internal (set)*/ var state: Published<EngineState> {
         get {
-            return _state
+            return _internalState
         }
         set {
-            _state = newValue
+            _internalState = newValue
+            self.objectWillChange
         }
     }
     @Published var _error: EngineErrorObject?
-    public internal (set) var error: EngineErrorObject? {
+    public /*internal (set)*/ var error: EngineErrorObject? {
         get {
             return _error
         }
         set {
             _error = newValue
+            self.objectWillChange
         }
     }
     @Published var _repository = EngineReposity()
@@ -90,6 +93,7 @@ public final class PaylikeEngine: Engine {
         }
         set {
             _repository = newValue
+            self.objectWillChange
         }
     }
 

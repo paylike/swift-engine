@@ -60,7 +60,7 @@ public final class PaylikeWebViewModel: WebViewModel {
         _paylikeWebView = PaylikeWebView(webView: webView!)
         
         if let engine = _engine {
-            engine.loggingFn(LoggingFormat(t: "WebView created", state: engine.state))
+            engine.loggingFn(LoggingFormat(t: "WebView created", state: engine.internalState))
         }
     }
     
@@ -75,7 +75,7 @@ public final class PaylikeWebViewModel: WebViewModel {
         _shouldRenderWebView = false
                 
         if let engine = _engine {
-            engine.loggingFn(LoggingFormat(t: "WebView dropped", state: engine.state))
+            engine.loggingFn(LoggingFormat(t: "WebView dropped", state: engine.internalState))
         }
     }
     
@@ -93,7 +93,7 @@ public final class PaylikeWebViewModel: WebViewModel {
     }
     
     private func setUpEngineListening() {
-        self._engine!.$_state
+        self._engine!.$internalState
             .sink(receiveValue: { state in
                 switch state {
                     case .WAITING_FOR_INPUT:

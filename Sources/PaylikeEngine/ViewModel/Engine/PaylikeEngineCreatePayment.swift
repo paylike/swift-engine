@@ -13,7 +13,7 @@ extension PaylikeEngine {
             try checkValidState(valid: .WAITING_FOR_INPUT, callerFunc: #function)
             try areEssentialPaymentRepositoryFieldsAdded()
             
-            loggingFn(LoggingFormat(t: "Starting payment", state: self.state))
+            loggingFn(LoggingFormat(t: "Starting payment", state: self.internalState))
             
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
@@ -32,7 +32,7 @@ extension PaylikeEngine {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
             
-            loggingFn(LoggingFormat(t: "Started payment", state: self.state))
+            loggingFn(LoggingFormat(t: "Started payment", state: self.internalState))
         } catch {
             prepareError(error)
         }
@@ -48,7 +48,7 @@ extension PaylikeEngine {
         do {
             try checkValidState(valid: .WEBVIEW_CHALLENGE_STARTED, callerFunc: #function)
             
-            loggingFn(LoggingFormat(t: "Continuing payment", state: self.state))
+            loggingFn(LoggingFormat(t: "Continuing payment", state: self.internalState))
             
             let response = try await payment()
             if let htmlBody = response.HTMLBody {
@@ -64,7 +64,7 @@ extension PaylikeEngine {
                 throw EngineError.PaymentFlowError(caller: #function, cause: "No htmlBody nor transactionId")
             }
             
-            loggingFn(LoggingFormat(t: "Continued payment", state: self.state))
+            loggingFn(LoggingFormat(t: "Continued payment", state: self.internalState))
         } catch {
             prepareError(error)
         }
@@ -80,7 +80,7 @@ extension PaylikeEngine {
         do {
             try checkValidState(valid: .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED, callerFunc: #function)
             
-            loggingFn(LoggingFormat(t: "Finishing payment", state: self.state))
+            loggingFn(LoggingFormat(t: "Finishing payment", state: self.internalState))
             
             let response = try await payment()
             if response.HTMLBody != nil {
@@ -94,14 +94,14 @@ extension PaylikeEngine {
             }
              saveState(newState: .SUCCESS)
             
-            loggingFn(LoggingFormat(t: "Finished payment", state: self.state))
+            loggingFn(LoggingFormat(t: "Finished payment", state: self.internalState))
         } catch {
             prepareError(error)
         }
     }
     
     func proceedPayment() {
-        switch state {
+        switch internalState {
             case .WEBVIEW_CHALLENGE_STARTED:
                 Task {
                     await continuePayment()
