@@ -40,7 +40,7 @@ extension PaylikeEngine {
     }
     
     func saveErrorObject(newErrorObject: EngineErrorObject?) {
-        error = newErrorObject
+        internalError = newErrorObject
         objectWillChange.send()
     }
     func saveState(newState: EngineState) {

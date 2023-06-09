@@ -53,8 +53,8 @@ final class PaylikeEngineAddPaymentDataTests: XCTestCase {
         XCTAssertNil(engine.repository.paymentRepository)
         Task {
             await engine.addEssentialPaymentData(applePayToken: Self.applePayToken)
-            guard engine.state != .ERROR else {
-                XCTFail("Should not get error: \(engine.error!.message)")
+            guard engine.internalState != .ERROR else {
+                XCTFail("Should not get error: \(engine.internalError!.message)")
                 return
             }
             XCTAssertNotNil(engine.repository.paymentRepository)
@@ -81,8 +81,8 @@ final class PaylikeEngineAddPaymentDataTests: XCTestCase {
                 month: Self.cardExpiryMonth,
                 year: Self.cardExpiryYear
             )
-            guard engine.state != .ERROR else {
-                XCTFail("Should not get error: \(engine.error!.message)")
+            guard engine.internalState != .ERROR else {
+                XCTFail("Should not get error: \(engine.internalError!.message)")
                 return
             }
             XCTAssertNotNil(engine.repository.paymentRepository)
@@ -117,7 +117,7 @@ final class PaylikeEngineAddPaymentDataTests: XCTestCase {
             )
             XCTAssertNotNil(engine.repository)
             XCTAssertNil(engine.repository.paymentRepository)
-            XCTAssertEqual(engine.state, .ERROR)
+            XCTAssertEqual(engine.internalState, .ERROR)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10)
@@ -190,7 +190,7 @@ final class PaylikeEngineAddPaymentDataTests: XCTestCase {
             )
             XCTAssertNotNil(engine.repository)
             XCTAssertNotNil(engine.repository.paymentRepository)
-            XCTAssertEqual(engine.state, .ERROR)
+            XCTAssertEqual(engine.internalState, .ERROR)
             XCTAssertNotNil(engine.error)
             expectation.fulfill()
         }
@@ -202,7 +202,7 @@ final class PaylikeEngineAddPaymentDataTests: XCTestCase {
         XCTAssertNil(engine.repository.htmlRepository)
         XCTAssertNil(engine.repository.authorizationId)
         XCTAssertNil(engine.repository.transactionId)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
-        XCTAssertNil(engine.error)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
+        XCTAssertNil(engine.internalError)
     }
 }

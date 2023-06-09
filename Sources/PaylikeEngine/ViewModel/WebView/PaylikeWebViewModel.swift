@@ -11,7 +11,7 @@ public protocol WebViewModel: ObservableObject {
     var webView: WKWebView? { get }
 
     var paylikeWebView: PaylikeWebView? { get }
-    var shouldRenderWebView: Bool { get }
+    var shouldRenderWebView: Published<Bool> { get set }
     
     func createWebView()
     func dropWebView()
@@ -22,13 +22,10 @@ public protocol WebViewModel: ObservableObject {
  */
 public final class PaylikeWebViewModel: WebViewModel {
     
-    
-    
     weak var _engine: PaylikeEngine?
     public var engine: (any Engine)? {
         return _engine
     }
-    
     
     var _webView: WKWebView?
     public var webView: WKWebView? {
@@ -39,9 +36,14 @@ public final class PaylikeWebViewModel: WebViewModel {
     public var paylikeWebView: PaylikeWebView? {
         return _paylikeWebView
     }
-    @Published private var _shouldRenderWebView = false
-    public var shouldRenderWebView: Bool {
-        return _shouldRenderWebView
+    @Published private var privateShouldRenderWebView = false
+    public var shouldRenderWebView: Published<Bool> {
+        get {
+            return _privateShouldRenderWebView
+        }
+        set {
+            _privateShouldRenderWebView = newValue
+        }
     }
     private var hintsListener: HintsListener?
     private var cancellables: Set<AnyCancellable> = []
@@ -72,7 +74,7 @@ public final class PaylikeWebViewModel: WebViewModel {
         _paylikeWebView = nil
         hintsListener = nil
         cancellables = []
-        _shouldRenderWebView = false
+        privateShouldRenderWebView = false
                 
         if let engine = _engine {
             engine.loggingFn(LoggingFormat(t: "WebView dropped", state: engine.internalState))
@@ -97,9 +99,9 @@ public final class PaylikeWebViewModel: WebViewModel {
             .sink(receiveValue: { state in
                 switch state {
                     case .WAITING_FOR_INPUT:
-                        self._shouldRenderWebView = false
+                        self.privateShouldRenderWebView = false
                     case .WEBVIEW_CHALLENGE_STARTED:
-                        self._shouldRenderWebView = true
+                        self.privateShouldRenderWebView = true
                     case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
                         Task {
                             await MainActor.run {
@@ -107,9 +109,9 @@ public final class PaylikeWebViewModel: WebViewModel {
                             }
                         }
                     case .SUCCESS:
-                        self._shouldRenderWebView = false
+                        self.privateShouldRenderWebView = false
                     case .ERROR:
-                        self._shouldRenderWebView = false
+                        self.privateShouldRenderWebView = false
                 }
             })
             .store(in: &cancellables)

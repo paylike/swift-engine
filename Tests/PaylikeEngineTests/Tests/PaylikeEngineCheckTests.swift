@@ -8,12 +8,12 @@ final class PaylikeEngineCheckTests: XCTestCase {
     
     func test_PaylikeEngine_checkValidState_valid() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         XCTAssertNoThrow(try engine.checkValidState(valid: .WAITING_FOR_INPUT, callerFunc: testFunc))
     }
     func test_PaylikeEngine_checkValidState_invalid() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         do {
             XCTAssertNoThrow(try engine.checkValidState(valid: .WAITING_FOR_INPUT, callerFunc: testFunc))
             try engine.checkValidState(valid: .ERROR, callerFunc: testFunc)
@@ -26,13 +26,13 @@ final class PaylikeEngineCheckTests: XCTestCase {
     
     func test_PaylikeEngine_isPaymentRepositoryInitialised_valid() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         engine.repository = EngineReposity(paymentRepository: CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: merchantId)))
         XCTAssertNoThrow(try engine.isPaymentRepositoryInitialised())
     }
     func test_PaylikeEngine_isPaymentRepositoryInitialised_invalid() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         do {
             try engine.isPaymentRepositoryInitialised()
         } catch {
@@ -44,7 +44,7 @@ final class PaylikeEngineCheckTests: XCTestCase {
     
     func test_PaylikeEngine_areEssentialPaymentRepositoryFieldsAdded_valid_applePay() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         let applePayToken = "token"
         engine.repository = EngineReposity(paymentRepository: CreatePaymentRequest(
             with: ApplePayToken(token: applePayToken),
@@ -55,7 +55,7 @@ final class PaylikeEngineCheckTests: XCTestCase {
     }
     func test_PaylikeEngine_areEssentialPaymentRepositoryFieldsAdded_valid_cardData() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         let cardNumberToken = "token"
         let cardCvcToken = "token"
         engine.repository = EngineReposity(paymentRepository: CreatePaymentRequest(
@@ -70,7 +70,7 @@ final class PaylikeEngineCheckTests: XCTestCase {
     }
     func test_PaylikeEngine_areEssentialPaymentRepositoryFieldsAdded_invalid_none() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         engine.repository = EngineReposity(paymentRepository: CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: merchantId)))
         do {
             try engine.areEssentialPaymentRepositoryFieldsAdded()
@@ -82,7 +82,7 @@ final class PaylikeEngineCheckTests: XCTestCase {
     }
     func test_PaylikeEngine_areEssentialPaymentRepositoryFieldsAdded_invalid_bothExist() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         let applePayToken = "token"
         let cardNumberToken = "token"
         let cardCvcToken = "token"
@@ -106,27 +106,27 @@ final class PaylikeEngineCheckTests: XCTestCase {
     
     func test_PaylikeEngine_isNumberOfHintsRight_valid() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         engine.repository = EngineReposity(paymentRepository: CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: merchantId)))
         XCTAssertNoThrow(try engine.isNumberOfHintsRight())
         
-        engine.state = .WEBVIEW_CHALLENGE_STARTED
-        let numberOfHints = EngineState.getNumberOfExpectedHints(state: engine.state)
+        engine.internalState = .WEBVIEW_CHALLENGE_STARTED
+        let numberOfHints = EngineState.getNumberOfExpectedHints(state: engine.internalState)
         engine.repository.paymentRepository?.hints = [String](repeating: "hint", count: numberOfHints)
         XCTAssertNoThrow(try engine.isNumberOfHintsRight())
     }
     
     func test_PaylikeEngine_isNumberOfHintsRight_invalid() {
         let engine = PaylikeEngine(merchantID: merchantId, engineMode: .TEST)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
         engine.repository = EngineReposity(paymentRepository: CreatePaymentRequest(merchantID: PaymentIntegration(merchantId: merchantId)))
-        engine.state = .WEBVIEW_CHALLENGE_STARTED
+        engine.internalState = .WEBVIEW_CHALLENGE_STARTED
         do {
             try engine.isNumberOfHintsRight()
         } catch {
             let errorString = (error as! EngineError).errorDescription
             let actualHintNumber = engine.repository.paymentRepository!.hints.count
-            let expectedHintNumber = EngineState.getNumberOfExpectedHints(state: engine.state)
+            let expectedHintNumber = EngineState.getNumberOfExpectedHints(state: engine.internalState)
             let expectedErrorString = EngineError.WrongAmountOfHints(actual: actualHintNumber, expected: expectedHintNumber).errorDescription
             XCTAssertEqual(errorString, expectedErrorString)
         }

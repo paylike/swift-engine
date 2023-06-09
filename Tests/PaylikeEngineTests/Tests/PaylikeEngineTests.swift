@@ -14,12 +14,12 @@ final class PaylikeEngineTests: XCTestCase {
         XCTAssertNotNil(engine.repository)
         XCTAssertNotNil(engine.webViewModel)
         
-        XCTAssertNil(engine.error)
+        XCTAssertNil(engine.internalError)
 
         XCTAssertEqual(engine.merchantID, merchantId)
         XCTAssertEqual(engine.engineMode, .TEST)
         XCTAssertEqual(engine.loggingMode, .DEBUG)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
     }
     
     func test_PaylikeEngine_initializationLive() throws {
@@ -31,12 +31,12 @@ final class PaylikeEngineTests: XCTestCase {
         XCTAssertNotNil(engine.repository)
         XCTAssertNotNil(engine.webViewModel)
         
-        XCTAssertNil(engine.error)
+        XCTAssertNil(engine.internalError)
         
         XCTAssertEqual(engine.merchantID, merchantId)
         XCTAssertEqual(engine.engineMode, .LIVE)
         XCTAssertEqual(engine.loggingMode, .RELEASE)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
     }
     
     func test_PaylikeEngine_setLoggingMode() throws {

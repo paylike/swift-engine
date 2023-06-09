@@ -12,8 +12,8 @@ public protocol Engine: ObservableObject {
     var client: Client { get set }
     var webViewModel: (any WebViewModel)? { get set }
     
-    var state: Published<EngineState> { get }
-    var error: EngineErrorObject? { get }
+    var state: Published<EngineState> { get set }
+    var error: Published<EngineErrorObject?> { get set }
     var repository: EngineReposity { get set }
 
     func addEssentialPaymentData(applePayToken: String) async
@@ -67,7 +67,7 @@ public final class PaylikeEngine: Engine {
     }
     
     @Published var internalState = EngineState.WAITING_FOR_INPUT
-    public /*internal (set)*/ var state: Published<EngineState> {
+    public var state: Published<EngineState> {
         get {
             return _internalState
         }
@@ -75,16 +75,16 @@ public final class PaylikeEngine: Engine {
             _internalState = newValue
         }
     }
-    @Published var _error: EngineErrorObject?
-    public /*internal (set)*/ var error: EngineErrorObject? {
+    @Published var internalError: EngineErrorObject?
+    public var error: Published<EngineErrorObject?> {
         get {
-            return _error
+            return _internalError
         }
         set {
-            _error = newValue
+            _internalError = newValue
         }
     }
-    @Published var _repository = EngineReposity()
+    var _repository = EngineReposity()
     public var repository: EngineReposity {
         get {
             return _repository

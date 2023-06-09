@@ -5,8 +5,8 @@ import SwiftUI
 import WebKit
 
 struct ExampleView: View {
-    
     @StateObject private var viewModel = ViewModel(engine: PaylikeEngine(merchantID: merchantId, engineMode: .TEST))
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -15,8 +15,6 @@ struct ExampleView: View {
                 } else {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Hints: ")
-                                .padding(1)
                             Text("State: ")
                                 .padding(1)
                             Text("Transaction ID: ")
@@ -24,8 +22,6 @@ struct ExampleView: View {
                         }
                         Spacer()
                         VStack(alignment: .trailing) {
-                            Text("\(viewModel.hintsNumber)")
-                                .padding(1)
                             Text("\(viewModel.engineState.rawValue)")
                                 .padding(1)
                                 .lineLimit(1)
@@ -34,7 +30,7 @@ struct ExampleView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: 100, alignment: .center)
-                    if viewModel.paylikeEngine.webViewModel!.shouldRenderWebView {
+                    if viewModel.shouldRenderWebView {
                         viewModel.paylikeEngine.webViewModel!.paylikeWebView
                             .frame(maxWidth: .infinity, maxHeight: 400, alignment: .center)
                     }

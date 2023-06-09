@@ -69,28 +69,28 @@ final class PaylikeEngineCreatePaymentTests: XCTestCase {
         
         let successExpectation = expectation(description: "Engine should reach Success state")
         
-        engine.$_state.sink(receiveValue: { state in
+        engine.state.projectedValue.sink(receiveValue: { state in
             switch state {
                 case .WAITING_FOR_INPUT:
                     break
                 case .WEBVIEW_CHALLENGE_STARTED:
                     Task {
                         await MainActor.run {
-                            XCTAssertEqual(engine.state, .WEBVIEW_CHALLENGE_STARTED)
+                            XCTAssertEqual(engine.internalState, .WEBVIEW_CHALLENGE_STARTED)
                             XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 3)
                         }
                     }
                 case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
                     Task {
                         await MainActor.run {
-                            XCTAssertEqual(engine.state, .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
+                            XCTAssertEqual(engine.internalState, .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED)
                             XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 7)
                         }
                     }
                 case .SUCCESS:
                     Task {
                         await MainActor.run {
-                            XCTAssertEqual(engine.state, .SUCCESS)
+                            XCTAssertEqual(engine.internalState, .SUCCESS)
                             XCTAssertEqual(engine.repository.paymentRepository?.hints.count, 8)
                             XCTAssertNotNil(engine.repository.authorizationId)
                             XCTAssertEqual(engine.repository.authorizationId, Self.mockPaylikeServer.authorizationId)
@@ -110,7 +110,7 @@ final class PaylikeEngineCreatePaymentTests: XCTestCase {
         XCTAssertNil(engine.repository.htmlRepository)
         XCTAssertNil(engine.repository.transactionId)
         XCTAssertNil(engine.repository.paymentRepository)
-        XCTAssertEqual(engine.state, .WAITING_FOR_INPUT)
+        XCTAssertEqual(engine.internalState, .WAITING_FOR_INPUT)
     }
 }
 

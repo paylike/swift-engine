@@ -9,7 +9,7 @@ class MockedWebViewModel: WebViewModel {
      * Irrelevant for the test
      */
     var webView: WKWebView? = nil
-    var shouldRenderWebView: Bool = false
+    var shouldRenderWebView: Published<Bool> = .init(initialValue: false)
     var paylikeWebView: PaylikeWebView? = nil
     
     var requester = PaylikeHTTPClient()
@@ -40,7 +40,7 @@ class MockedWebViewModel: WebViewModel {
     }
     
     private func setUpEngineListening() {
-        self._engine!.$_state
+        self._engine!.state.projectedValue
             .sink(receiveValue: { state in
                 switch state {
                     case .WAITING_FOR_INPUT:
@@ -64,10 +64,10 @@ class MockedWebViewModel: WebViewModel {
                     case .WEBVIEW_CHALLENGE_USER_INPUT_REQUIRED:
                         // act like loading to webview
                         if PaylikeEngineCreatePaymentTests.mockPaylikeServer.htmlBodyString == self.engine?.repository.htmlRepository {
-                            //                            debugPrint("HTML is right!")
+                            // debugPrint("HTML is right!")
                         }
                         // act like tds interaction
-                        //                        debugPrint("User interaction!")
+                        // debugPrint("User interaction!")
                         // then just continue
                         Task {
                             await MainActor.run {
