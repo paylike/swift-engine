@@ -73,7 +73,6 @@ public final class PaylikeEngine: Engine {
         }
         set {
             _internalState = newValue
-            self.objectWillChange.send()
         }
     }
     @Published var _error: EngineErrorObject?
@@ -83,7 +82,6 @@ public final class PaylikeEngine: Engine {
         }
         set {
             _error = newValue
-            self.objectWillChange.send()
         }
     }
     @Published var _repository = EngineReposity()
@@ -93,7 +91,6 @@ public final class PaylikeEngine: Engine {
         }
         set {
             _repository = newValue
-            self.objectWillChange.send()
         }
     }
 
