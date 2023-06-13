@@ -4,10 +4,10 @@ import PaylikeClient
  * Stores information about the current payment flow
  */
 public struct EngineReposity {
-    public var paymentRepository: CreatePaymentRequest? =  nil
-    public var htmlRepository: String? = nil
-    public var transactionId: String? = nil
-    public var authorizationId: String? = nil
+    public var paymentRepository: CreatePaymentRequest?
+    public var htmlRepository: String?
+    public var transactionId: String?
+    public var authorizationId: String?
     
     public init(
         paymentRepository: CreatePaymentRequest? = nil,

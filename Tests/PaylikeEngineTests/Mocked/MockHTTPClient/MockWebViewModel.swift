@@ -3,7 +3,7 @@ import Combine
 import PaylikeRequest
 import WebKit
 
-class MockedWebViewModel: WebViewModel {
+class MockWebViewModel: WebViewModel {
     
     /*
      * Irrelevant for the test

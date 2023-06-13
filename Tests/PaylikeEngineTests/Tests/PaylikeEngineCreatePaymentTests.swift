@@ -27,7 +27,7 @@ final class PaylikeEngineCreatePaymentTests: XCTestCase {
          */
         mockedPaylikeClient.httpClient = MockHTTPClient(MockPort)
         engine.client = mockedPaylikeClient
-        engine.webViewModel = MockedWebViewModel(engine: engine)
+        engine.webViewModel = MockWebViewModel(engine: engine)
         
         /*
          * Initializing client and HTTPclient without logging. We do not log in tests

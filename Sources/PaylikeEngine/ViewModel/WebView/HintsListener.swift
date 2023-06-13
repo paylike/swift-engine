@@ -4,8 +4,9 @@ import WebKit
  * Public protocol to provide Listener interface for the WebView JS content
  */
 public protocol Listener {
-    init(webViewViewModel: any WebViewModel)
     var handler: ((_ isReady: Bool, _ hints: [String]) -> Void) { get }
+
+    init(webViewViewModel: any WebViewModel)
 }
 
 /**

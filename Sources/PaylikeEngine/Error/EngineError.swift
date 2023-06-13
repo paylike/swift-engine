@@ -10,7 +10,6 @@ public enum EngineError: Error, LocalizedError {
     case EssentialPaymentRepositoryDataFailure(hasBoth: Bool)
     case InvalidCardNumber(cardNumber: String)
     case WrongAmountOfHints(actual: Int, expected: Int)
-    case CardNumberIsInvalid(String)
     case PaymentFlowError(caller: String, cause: String)
     case PaymentTestDataIsNil
     
@@ -34,8 +33,6 @@ public enum EngineError: Error, LocalizedError {
                 return "Invalid card number: \(cardNumber)"
             case .WrongAmountOfHints(let actual, let expected):
                 return "Expected number: \(expected). Actual number: \(actual)."
-            case .CardNumberIsInvalid(let cardNubmer):
-                return "\(cardNubmer) is invalid based on Luhn algorithm."
             case .PaymentFlowError(let caller, let cause):
                 return "Payment flow error in \(caller). Error caused by: \(cause)."
             case .PaymentTestDataIsNil:

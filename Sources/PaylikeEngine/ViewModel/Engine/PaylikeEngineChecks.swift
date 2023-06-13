@@ -1,12 +1,12 @@
 extension PaylikeEngine {
     
-    internal func checkValidState(valid state: EngineState, callerFunc: String) throws {
+    func checkValidState(valid state: EngineState, callerFunc: String) throws {
         guard self.internalState == state else {
             throw EngineError.InvalidEngineState(caller: callerFunc, actual: self.internalState, expected: state)
         }
     }
     
-    internal func areEssentialPaymentRepositoryFieldsAdded() throws {
+    func areEssentialPaymentRepositoryFieldsAdded() throws {
         try isPaymentRepositoryInitialised()
         
         let hasCard = repository.paymentRepository!.card != nil
@@ -17,7 +17,7 @@ extension PaylikeEngine {
         }
     }
     
-    internal func isNumberOfHintsRight() throws {
+    func isNumberOfHintsRight() throws {
         try isPaymentRepositoryInitialised()
         let actual = repository.paymentRepository!.hints.count
         let expected = EngineState.getNumberOfExpectedHints(state: self.internalState)
@@ -26,7 +26,7 @@ extension PaylikeEngine {
         }
     }
     
-    internal func isPaymentRepositoryInitialised() throws {
+    func isPaymentRepositoryInitialised() throws {
         guard repository.paymentRepository != nil else {
             throw EngineError.PaymentRespositoryIsNotInitialised
         }
