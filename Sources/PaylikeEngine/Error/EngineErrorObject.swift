@@ -11,4 +11,18 @@ public struct EngineErrorObject {
     public let clientError: ClientError?
     public let webViewError: WebViewError?
     public let engineError: EngineError?
+    
+    public init(
+        message: String,
+        httpClientError: HTTPClientError? = nil,
+        clientError: ClientError? = nil,
+        webViewError: WebViewError? = nil,
+        engineError: EngineError? = nil
+    ) {
+        self.message = message
+        self.httpClientError = httpClientError
+        self.clientError = clientError
+        self.webViewError = webViewError
+        self.engineError = engineError
+    }
 }
