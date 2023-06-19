@@ -6,12 +6,15 @@ This library includes the core elements required to implement a payment flow tow
 If you are looking for our high level component providing complete payment forms as well, [check here](https://github.com/paylike/swift-sdk).
 
 ## Table of contents
-* [API Reference](#api-reference)
-* [PaylikeEngine](#paylikeengine) (Underlying business logic service)
-    * [Engine events](#engine-events)
-* [PaylikeWebView](#paylikeWebView) (WebView composable)
-    * [Understanding 3D Secure](#understanding-tds)
-* [Sample application](#sample-application)
+- [PaylikeEngine](#paylikeengine)
+  - [Table of contents](#table-of-contents)
+  - [API Reference](#api-reference)
+  - [PaylikeEngine](#paylikeengine-1)
+    - [Engine events](#engine-events)
+  - [PaylikeWebView](#paylikewebview)
+    - [Understanding 3D Secure](#understanding-3d-secure)
+  - [Sample application](#sample-application)
+  - [Engine library Architecture](#engine-library-architecture)
 
 ## API Reference
 
@@ -59,6 +62,8 @@ The library exposes an enum called EngineState which describes the following sta
 - SUCCESS - Indicates that all challenges are done successfully and the payment is being processed
 - ERROR - Happens when the flow could not be completed successfully
 
+<img title="Engine State Transition diagram" alt="" src="ReadMeResources/engineStateMachine.png" width="500" height="500">
+
 ## PaylikeWebView
 
 WebView component of the payment flow, able to render the webView required to execute the TDS challenge.
@@ -95,3 +100,7 @@ In the [example directory](/tree/main/ExampleApp) you can find a simple applicat
 You need to [register a merchant account](https://paylike.io/sign-up) with Paylike before you can use the sample application. Once you have created your account you can create a new client ID for yourself and use it in the sandbox environment.
 
 You have to enter your client ID to `merchantId` to initiate payment successfully in the example app.
+
+## Engine library Architecture
+
+<img title="Engine class diagram" alt="Class diagram of the Paylike Swift Engine library" src="ReadMeResources/libraryClassDiagram.png">
