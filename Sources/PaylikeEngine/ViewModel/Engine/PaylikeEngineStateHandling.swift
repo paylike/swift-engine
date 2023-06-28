@@ -25,7 +25,6 @@ extension PaylikeEngine {
      * Sets the engine to error state and loads an `e` error object to it
      */
     public func prepareError(_ error: Error) {
-        saveState(newState: .ERROR)
         
         loggingFn(LoggingFormat(t: "Setting error object with: \(error)", state: self.internalState))
         
@@ -37,6 +36,9 @@ extension PaylikeEngine {
             engineError: error as? EngineError
         )
         saveErrorObject(newErrorObject: errorObject)
+        saveState(newState: .ERROR)
+        
+        loggingFn(LoggingFormat(t: "Error state set with: \(error)", state: self.internalState))
     }
     
     func saveErrorObject(newErrorObject: EngineErrorObject?) {
